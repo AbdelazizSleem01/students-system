@@ -1,6 +1,5 @@
 'use client';
 
-import React from 'react';
 import { FaGithub, FaLinkedin, FaFilePdf, FaDownload } from 'react-icons/fa';
 
 interface SocialLink {

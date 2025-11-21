@@ -207,7 +207,6 @@ export default async function StudentPublicPage({ params }: PageProps) {
   );
 }
 
-// مكون InfoRow محسن ريسبونسيف 100%
 function InfoRow({ 
   icon: Icon, 
   label, 
