@@ -20,6 +20,7 @@ import {
 import { Metadata } from 'next';
 import DocumentsGallery from './DocumentsGallery';
 import CopyProfileButton from './CopyProfileButton';
+import VisitTracker from '@/components/VisitTracker';
 
 interface PageProps {
   params: Promise<{ id: string }>;
@@ -63,13 +64,18 @@ export default async function StudentPublicPage({ params }: PageProps) {
     !date ? 'N/A' : new Date(date).toLocaleDateString('en-GB', { day: 'numeric', month: 'numeric', year: 'numeric' });
 
   const socialLinks = [
-    { Icon: FaLinkedin, url: student.linkedin, label: 'LinkedIn' },
-    { Icon: FaGithub, url: student.github, label: 'GitHub' },
+    { Icon: FaLinkedin, url: `/api/analytics/linkedin/${id}`, label: 'LinkedIn' },
+    { Icon: FaGithub, url: `/api/analytics/github/${id}`, label: 'GitHub' },
     { Icon: FaFilePdf, url: student.cvUrl, label: 'CV' },
-  ].filter(link => link.url);
+  ].filter(link => {
+    if (link.label === 'LinkedIn') return student.linkedin;
+    if (link.label === 'GitHub') return student.github;
+    return link.url;
+  });
 
   return (
     <div className="min-h-screen bg-gray-50 py-8 px-4">
+      <VisitTracker studentId={id} />
       <div className="max-w-4xl mx-auto">
         <div className="bg-white rounded-3xl shadow-2xl overflow-hidden border border-gray-200">
 
