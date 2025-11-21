@@ -38,7 +38,6 @@ const StudentSchema = new mongoose.Schema({
   universityCardImage: String,
   scheduleImage: String,
   certificate1Image: String,
-  // Statistics fields
   visitCount: {
     type: Number,
     default: 0,

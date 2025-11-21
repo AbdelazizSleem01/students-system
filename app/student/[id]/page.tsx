@@ -1,3 +1,4 @@
+// app/student/[id]/page.tsx
 import { notFound } from 'next/navigation';
 import dbConnect from '@/lib/mongodb';
 import Student from '@/models/Student';
@@ -21,6 +22,7 @@ import { Metadata } from 'next';
 import DocumentsGallery from './DocumentsGallery';
 import CopyProfileButton from './CopyProfileButton';
 import VisitTracker from '@/components/VisitTracker';
+import SocialLinksClient from '@/components/SocialLinksClient';
 
 interface PageProps {
   params: Promise<{ id: string }>;
@@ -64,14 +66,32 @@ export default async function StudentPublicPage({ params }: PageProps) {
     !date ? 'N/A' : new Date(date).toLocaleDateString('en-GB', { day: 'numeric', month: 'numeric', year: 'numeric' });
 
   const socialLinks = [
-    { Icon: FaLinkedin, url: `/api/analytics/linkedin/${id}`, label: 'LinkedIn' },
-    { Icon: FaGithub, url: `/api/analytics/github/${id}`, label: 'GitHub' },
-    { Icon: FaFilePdf, url: student.cvUrl, label: 'CV' },
-  ].filter(link => {
-    if (link.label === 'LinkedIn') return student.linkedin;
-    if (link.label === 'GitHub') return student.github;
-    return link.url;
-  });
+    student.linkedin
+      ? {
+          icon: 'linkedin' as const,
+          analyticsUrl: `/api/analytics/linkedin/${id}`,
+          actualUrl: student.linkedin,
+          label: 'LinkedIn',
+        }
+      : null,
+    student.github
+      ? {
+          icon: 'github' as const,
+          analyticsUrl: `/api/analytics/github/${id}`,
+          actualUrl: student.github,
+          label: 'GitHub',
+        }
+      : null,
+    student.cvUrl
+      ? {
+          icon: 'cv' as const,
+          analyticsUrl: undefined,
+          actualUrl: student.cvUrl,
+          label: 'CV/Resume',
+          isDownload: true,
+        }
+      : null,
+  ].filter(Boolean) as Array<{ icon: 'github' | 'linkedin' | 'cv'; analyticsUrl?: string; actualUrl: string; label: string; isDownload?: boolean }>;
 
   return (
     <div className="min-h-screen bg-gray-50 py-8 px-4">
@@ -83,15 +103,12 @@ export default async function StudentPublicPage({ params }: PageProps) {
           <div className="bg-linear-to-r from-indigo-600 to-indigo-700 px-8 py-6 text-white">
             <h1 className="text-3xl font-bold text-center">Student Profile</h1>
             <p className="text-indigo-100 text-center mt-1 text-lg">{student.university || 'University Student'}</p>
-
           </div>
 
           <div className="p-8 pb-12">
 
-
+            {/* Profile Image + Name */}
             <div className="flex flex-col sm:flex-row items-center sm:items-start gap-8 mb-10 relative">
-
-              {/* Profile Image */}
               <div className="relative shrink-0">
                 {student.profileImage ? (
                   <div className="w-36 h-36 rounded-full ring-4 ring-indigo-500 ring-offset-4 ring-offset-white shadow-2xl overflow-hidden">
@@ -109,7 +126,6 @@ export default async function StudentPublicPage({ params }: PageProps) {
                     <FaGraduationCap className="text-6xl text-white" />
                   </div>
                 )}
-
               </div>
 
               <div className="text-center sm:text-left flex-1">
@@ -132,15 +148,13 @@ export default async function StudentPublicPage({ params }: PageProps) {
                       </div>
                     )}
                     {student.status === 'active' && (
-                      <div className="  bg-green-500 text-white px-5 py-2 rounded-full text-sm font-bold flex items-center gap-2 shadow-xl whitespace-nowrap border-4 border-white">
+                      <div className="bg-green-500 text-white px-5 py-2 rounded-full text-sm font-bold flex items-center gap-2 shadow-xl whitespace-nowrap border-4 border-white">
                         <FaCheckCircle className="text-lg" />
                         <span>Active</span>
                       </div>
                     )}
                   </div>
                 )}
-
-               
               </div>
             </div>
 
@@ -160,21 +174,7 @@ export default async function StudentPublicPage({ params }: PageProps) {
               )}
             </div>
 
-            {/* Social Links */}
-            {socialLinks.length > 0 && (
-              <div className="flex justify-center gap-5 my-8">
-                {socialLinks.map(({ Icon, url, label }) => (
-                  <Link
-                    key={label}
-                    href={url}
-                    className="bg-indigo-50 hover:bg-indigo-100 text-indigo-600 p-4 rounded-xl flex items-center gap-3 transition-all hover:scale-110 shadow-lg font-medium"
-                  >
-                    <Icon className="text-xl" />
-                    <span>{label}</span>
-                  </Link>
-                ))}
-              </div>
-            )}
+            {socialLinks.length > 0 && <SocialLinksClient links={socialLinks} />}
 
             {/* Documents Gallery */}
             <div className="my-12">
