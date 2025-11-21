@@ -247,8 +247,8 @@ export default function EditStudentPage() {
                 </div>
               </div>
               <div className="form-control mt-6">
-                <button 
-                  type="submit" 
+                <button
+                  type="submit"
                   className="btn btn-primary w-full py-3 font-semibold rounded-xl bg-linear-to-r from-blue-500 to-purple-600 border-none hover:shadow-lg transition-all"
                 >
                   {loading ? 'Verifying...' : 'Enter Edit Mode'}
@@ -312,7 +312,7 @@ export default function EditStudentPage() {
             <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
               <div className="flex-1">
                 <div className="flex items-center gap-3 mb-2">
-                 
+
                   <div>
                     <h1 className="text-2xl md:text-3xl font-bold text-gray-800">Edit {student.name}'s Profile</h1>
                     <p className="text-gray-600 text-sm md:text-base">Update and manage student information</p>
@@ -324,11 +324,10 @@ export default function EditStudentPage() {
                   {isMobile ? <FaMobile /> : <FaDesktop />}
                   {isMobile ? 'Mobile' : 'Desktop'}
                 </div>
-                <div className={`badge badge-lg gap-2 px-4 py-2 rounded-xl ${
-                  student.status === 'active' 
-                    ? 'bg-linear-to-r from-green-500 to-emerald-500 text-white' 
-                    : 'bg-linear-to-r from-red-500 to-pink-500 text-white'
-                }`}>
+                <div className={`badge badge-lg gap-2 px-4 py-2 rounded-xl ${student.status === 'active'
+                  ? 'bg-linear-to-r from-green-500 to-emerald-500 text-white'
+                  : 'bg-linear-to-r from-red-500 to-pink-500 text-white'
+                  }`}>
                   {student.status === 'active' ? <FaCheckCircle /> : <FaTimesCircle />}
                   {student.status}
                 </div>
@@ -353,16 +352,14 @@ export default function EditStudentPage() {
                   ].map((item) => (
                     <button
                       key={item.id}
-                      className={`w-full text-left p-4 rounded-xl cursor-pointer transition-all duration-200 flex items-center gap-3 ${
-                        activeSection === item.id 
-                          ? `bg-linear-to-r ${item.color} text-white shadow-lg transform -translate-y-0.5` 
-                          : 'bg-gray-50 text-gray-700 hover:bg-gray-100 hover:shadow-md'
-                      }`}
+                      className={`w-full text-left p-4 rounded-xl cursor-pointer transition-all duration-200 flex items-center gap-3 ${activeSection === item.id
+                        ? `bg-linear-to-r ${item.color} text-white shadow-lg transform -translate-y-0.5`
+                        : 'bg-gray-50 text-gray-700 hover:bg-gray-100 hover:shadow-md'
+                        }`}
                       onClick={() => setActiveSection(item.id)}
                     >
-                      <div className={`p-2 rounded-lg ${
-                        activeSection === item.id ? 'bg-white/20' : 'bg-white shadow'
-                      }`}>
+                      <div className={`p-2 rounded-lg ${activeSection === item.id ? 'bg-white/20' : 'bg-white shadow'
+                        }`}>
                         {item.icon}
                       </div>
                       <span className="font-medium">{item.label}</span>
@@ -380,12 +377,12 @@ export default function EditStudentPage() {
                 {/* Personal Information */}
                 {activeSection === 'personal' && (
                   <div className="space-y-6">
-                    <SectionHeader 
-                      icon={<FaUser className="text-white text-xl" />} 
-                      title="Personal Information" 
-                      color="from-blue-500 to-blue-600" 
+                    <SectionHeader
+                      icon={<FaUser className="text-white text-xl" />}
+                      title="Personal Information"
+                      color="from-blue-500 to-blue-600"
                     />
-                    
+
                     <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
                       {/* Profile Image */}
                       <div className="lg:col-span-2">
@@ -470,12 +467,12 @@ export default function EditStudentPage() {
                 {/* Academic Information */}
                 {activeSection === 'academic' && (
                   <div className="space-y-6">
-                    <SectionHeader 
-                      icon={<FaGraduationCap className="text-white text-xl" />} 
-                      title="Academic Information" 
-                      color="from-green-500 to-green-600" 
+                    <SectionHeader
+                      icon={<FaGraduationCap className="text-white text-xl" />}
+                      title="Academic Information"
+                      color="from-green-500 to-green-600"
                     />
-                    
+
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                       {[
                         { icon: <FaUniversity />, field: 'university', label: 'University', placeholder: 'Enter university name' },
@@ -506,12 +503,12 @@ export default function EditStudentPage() {
                 {/* Social Links */}
                 {activeSection === 'social' && (
                   <div className="space-y-6">
-                    <SectionHeader 
-                      icon={<FaShareAlt className="text-white text-xl" />} 
-                      title="Social Links" 
-                      color="from-purple-500 to-purple-600" 
+                    <SectionHeader
+                      icon={<FaShareAlt className="text-white text-xl" />}
+                      title="Social Links"
+                      color="from-purple-500 to-purple-600"
                     />
-                    
+
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                       {[
                         'github', 'linkedin', 'cvUrl', 'whatsapp', 'instagram',
@@ -540,12 +537,12 @@ export default function EditStudentPage() {
                 {/* Additional Information */}
                 {activeSection === 'additional' && (
                   <div className="space-y-6">
-                    <SectionHeader 
-                      icon={<FaInfoCircle className="text-white text-xl" />} 
-                      title="Additional Information" 
-                      color="from-orange-500 to-orange-600" 
+                    <SectionHeader
+                      icon={<FaInfoCircle className="text-white text-xl" />}
+                      title="Additional Information"
+                      color="from-orange-500 to-orange-600"
                     />
-                    
+
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                       {[
                         { icon: <FaCalendar />, field: 'academicYear', label: 'Academic Year', type: 'text', placeholder: 'Enter academic year' },
@@ -568,7 +565,7 @@ export default function EditStudentPage() {
                           />
                         </div>
                       ))}
-                      
+
                       <div className="form-control">
                         <label className="label block mb-3">
                           <span className="label-text font-semibold text-gray-700 flex items-center gap-2">
@@ -592,12 +589,12 @@ export default function EditStudentPage() {
                 {/* Documents */}
                 {activeSection === 'documents' && (
                   <div className="space-y-6">
-                    <SectionHeader 
-                      icon={<FaFile className="text-white text-xl" />} 
-                      title="Documents" 
-                      color="from-teal-500 to-teal-600" 
+                    <SectionHeader
+                      icon={<FaFile className="text-white text-xl" />}
+                      title="Documents"
+                      color="from-teal-500 to-teal-600"
                     />
-                    
+
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                       {[
                         { field: 'officialDocumentsImage', label: 'Official Documents', icon: <FaFilePdf /> },
@@ -691,7 +688,7 @@ export default function EditStudentPage() {
                   height={600}
                   className="w-full h-full object-contain max-h-[70vh]"
                 />
-                <button 
+                <button
                   className="absolute top-4 right-4 btn btn-circle btn-ghost text-white bg-black/50 hover:bg-black/70 border-none"
                   onClick={() => setSelectedImage(null)}
                 >

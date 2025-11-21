@@ -47,7 +47,7 @@ export const metadata: Metadata = {
   openGraph: {
     type: 'website',
     locale: 'en_US',
-    url: 'https://student-id-sys.vercel.app/',
+    url: 'https://students-system-com.vercel.app/',
     title: 'Student ID System',
     description: 'A comprehensive student profile and ID management system for universities.',
     siteName: 'Student ID System',
@@ -67,7 +67,7 @@ export const metadata: Metadata = {
     images: ['/icons8-id-color-96.png'],
   },
   alternates: {
-    canonical: 'https://student-id-sys.vercel.app/',
+    canonical: 'https://students-system-com.vercel.app/',
   },
 };
 
