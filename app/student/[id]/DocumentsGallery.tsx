@@ -69,10 +69,11 @@ export default function DocumentsGallery({
                     </p>
                     <a
                       href={`/api/download-cv?url=${encodeURIComponent(url!)}&name=${encodeURIComponent(fileName || 'Schedule.pdf')}`}
-                      className="mt-2 px-4 py-2 bg-red-500 hover:bg-red-600 text-white text-xs font-semibold rounded-lg flex items-center gap-2 shadow-md transition-all"
+                      className="mt-2  px-4 py-2 bg-red-500 hover:bg-red-600 text-white text-xs font-semibold rounded-lg flex items-center gap-2 shadow-md transition-all"
                       onClick={(e) => e.stopPropagation()}
                     >
                       Download
+                      <FaDownload />
                     </a>
                   </div>
                 ) : (

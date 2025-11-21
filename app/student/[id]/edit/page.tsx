@@ -10,7 +10,8 @@ import {
   FaBook, FaCalendarAlt, FaCheckCircle, FaTimesCircle, FaGithub, FaLinkedin,
   FaFilePdf, FaWhatsapp, FaInstagram, FaTiktok, FaSpotify, FaFacebook,
   FaTwitter, FaSnapchat, FaFile, FaCalendar, FaEnvelope, FaArrowLeft,
-  FaMobile, FaDesktop, FaChartBar
+  FaMobile, FaDesktop, FaChartBar,
+  FaDownload
 } from 'react-icons/fa';
 
 export default function EditStudentPage() {
@@ -73,27 +74,45 @@ export default function EditStudentPage() {
       const formData = new FormData();
       formData.append('file', file);
 
-      const response = await fetch('/api/upload', {
+      const uploadRes = await fetch('/api/upload', {
         method: 'POST',
         body: formData,
       });
 
-      if (response.ok) {
-        const { url, originalName } = await response.json();
-        const updatedStudent = { ...student!, [field]: url } as any;
+      if (!uploadRes.ok) throw new Error('Upload failed');
 
-        if (field === 'cvUrl' || field === 'scheduleImage') {
-          updatedStudent[`${field}FileName`] = originalName;
-        }
+      const { url, originalName } = await uploadRes.json();
 
-        setStudent(updatedStudent);
-        await handleSave(updatedStudent);
-        Swal.fire('Success!', 'Document uploaded successfully.', 'success');
-      } else {
-        throw new Error('Upload failed');
-      }
+      const updatedStudent = {
+        ...student!,
+        [field]: url,
+        ...(field === 'cvUrl' && { cvFileName: originalName }),
+        ...(field === 'scheduleImage' && { scheduleImageFileName: originalName }),
+      };
+
+      setStudent(updatedStudent as Student);
+
+      const saveRes = await fetch(`/api/students/${student!._id}`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(updatedStudent),
+      });
+
+      if (!saveRes.ok) throw new Error('Failed to save');
+
+      Swal.fire({
+        icon: 'success',
+        title: 'Uploaded successfully!',
+        text: originalName,
+        timer: 2500,
+        showConfirmButton: false
+      });
+
+      router.refresh();
+
     } catch (error) {
-      Swal.fire('Error!', 'Failed to upload document.', 'error');
+      console.error(error);
+      Swal.fire('Error!', 'Failed to upload the file. Please try again.', 'error');
     } finally {
       setImageUploading(false);
     }
@@ -388,7 +407,7 @@ export default function EditStudentPage() {
                   <div className="space-y-6">
                     <SectionHeader icon={<FaShareAlt className="text-white text-xl" />} title="Social Links" color="from-purple-500 to-purple-600" />
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                      {['github','linkedin','whatsapp','instagram','tiktok','spotify','facebook','x','threads','snapchat'].map((platform) => (
+                      {['github', 'linkedin', 'whatsapp', 'instagram', 'tiktok', 'spotify', 'facebook', 'x', 'threads', 'snapchat'].map((platform) => (
                         <div key={platform} className="form-control">
                           <label className="label block mb-3"><span className="label-text font-semibold text-gray-700 flex items-center gap-2">{socialIcons[platform] || <FaShareAlt />}{platform.charAt(0).toUpperCase() + platform.slice(1)}</span></label>
                           <input type="url" className="input input-bordered w-full focus:ring-2 focus:ring-purple-500 rounded-xl py-3" value={(student as any)[platform] || ''} onChange={(e) => handleInputChange(platform as keyof Student, e.target.value)} placeholder={`Enter ${platform} URL`} />
@@ -409,7 +428,7 @@ export default function EditStudentPage() {
                       ].map((item) => (
                         <div key={item.field} className="form-control">
                           <label className="label block mb-3"><span className="label-text font-semibold text-gray-700 flex items-center gap-2">{item.icon}{item.label}</span></label>
-                          <input type={item.type as 'text'|'date'} className="input input-bordered w-full focus:ring-2 focus:ring-orange-500 rounded-xl py-3" value={(student as any)[item.field] || ''} onChange={(e) => handleInputChange(item.field as keyof Student, e.target.value)} placeholder={item.placeholder} />
+                          <input type={item.type as 'text' | 'date'} className="input input-bordered w-full focus:ring-2 focus:ring-orange-500 rounded-xl py-3" value={(student as any)[item.field] || ''} onChange={(e) => handleInputChange(item.field as keyof Student, e.target.value)} placeholder={item.placeholder} />
                         </div>
                       ))}
                       <div className="form-control">
@@ -424,96 +443,135 @@ export default function EditStudentPage() {
                 )}
 
                 {activeSection === 'documents' && (
-                  <div className="space-y-6">
-                    <SectionHeader icon={<FaFile className="text-white text-xl" />} title="Documents" color="from-teal-500 to-teal-600" />
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  <div className="space-y-8">
+                    <SectionHeader
+                      icon={<FaFile className="text-white text-xl" />}
+                      title="Documents"
+                      color="from-teal-500 to-teal-600"
+                    />
+
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-6">
                       {[
-                        { field: 'officialDocumentsImage', label: 'Official Documents', icon: <FaFilePdf /> },
-                        { field: 'nationalIdImage', label: 'National ID', icon: <FaIdCard /> },
-                        { field: 'universityCardImage', label: 'University Card', icon: <FaUniversity /> },
-                        { field: 'certificate1Image', label: 'Certificate 1', icon: <FaCheckCircle /> },
-                        { field: 'scheduleImage', label: 'Schedule', icon: <FaCalendarAlt /> },
-                        { field: 'cvUrl', label: 'CV/Resume', icon: <FaFilePdf /> },
-                      ].map((doc) => (
-                        <div key={doc.field} className="form-control">
-                          <label className="label block mb-3"><span className="label-text font-semibold text-gray-700">{doc.label}</span></label>
-                          <div className="flex flex-col items-center gap-4 p-4 bg-gray-50 rounded-2xl border border-gray-200">
-                            {student?.[doc.field as keyof Student] ? (
-                              ['cvUrl', 'scheduleImage'].includes(doc.field) ? (
-                                <div className="flex flex-col items-center gap-3">
-                                  <div className="w-20 h-20 rounded-xl bg-linear-to-br from-red-200 to-red-300 flex items-center justify-center border-4 border-white shadow-lg">
-                                    <a
-                                      href={`/api/download-cv?url=${encodeURIComponent(student[doc.field as keyof Student] as string)}&name=${encodeURIComponent((student as any)[`${doc.field}FileName`] || 'Document.pdf')}`}
-                                      className="flex items-center justify-center w-full h-full"
-                                    >
-                                      <FaFilePdf className="text-4xl text-red-600" />
-                                    </a>
-                                  </div>
-                                  <p className="text-sm text-gray-600 font-medium text-center truncate max-w-full">
-                                    {(student as any)[`${doc.field}FileName`] || doc.label}
-                                  </p>
-                                </div>
-                              ) : (
-                                <div className="avatar cursor-pointer hover:scale-105 transition-transform">
-                                  <div className="w-20 h-20 rounded-xl overflow-hidden border-4 border-white shadow-lg">
-                                    <Image
-                                      src={student[doc.field as keyof Student] as string}
-                                      alt={doc.label}
-                                      width={80}
-                                      height={80}
-                                      className="object-cover w-full h-full"
-                                      onClick={() => setSelectedImage(student[doc.field as keyof Student] as string)}
-                                    />
-                                  </div>
-                                </div>
-                              )
-                            ) : (
-                              <div className="w-20 h-20 rounded-xl bg-linear-to-br from-gray-200 to-gray-300 flex items-center justify-center shadow-lg">
-                                {doc.icon}
-                              </div>
-                            )}
-                            <label className="btn btn-outline btn-primary cursor-pointer rounded-xl w-full">
-                              <FaUpload className="mr-2" />
-                              {imageUploading ? 'Uploading...' : 'Upload Document'}
-                              <input
-                                type="file"
-                                className="hidden"
-                                accept={['cvUrl', 'scheduleImage'].includes(doc.field) ? 'application/pdf' : 'image/*'}
-                                onChange={(e) => e.target.files?.[0] && handleImageUpload(e.target.files[0], doc.field as keyof Student)}
-                                disabled={imageUploading}
-                              />
+                        { field: 'officialDocumentsImage', label: 'Official Documents', icon: <FaFilePdf className="text-4xl text-gray-500" /> },
+                        { field: 'nationalIdImage', label: 'National ID', icon: <FaIdCard className="text-4xl text-blue-600" /> },
+                        { field: 'universityCardImage', label: 'University Card', icon: <FaUniversity className="text-4xl text-indigo-600" /> },
+                        { field: 'certificate1Image', label: 'Certificate', icon: <FaCheckCircle className="text-4xl text-green-600" /> },
+                        { field: 'scheduleImage', label: 'Schedule', icon: <FaCalendarAlt className="text-4xl text-purple-600" />, isPdf: true },
+                        { field: 'cvUrl', label: 'CV / Resume', icon: <FaFilePdf className="text-5xl text-red-600" />, isPdf: true },
+                      ].map((doc) => {
+                        const hasFile = !!student?.[doc.field as keyof Student];
+                        const fileName = doc.isPdf
+                          ? (doc.field === 'cvUrl' ? student?.cvFileName : student?.scheduleImageFileName)
+                          : null;
+
+                        return (
+                          <div key={doc.field} className="form-control">
+                            <label className="label pb-2">
+                              <span className="label-text font-bold text-gray-800 text-lg">
+                                {doc.label}
+                              </span>
                             </label>
+
+                            <div className="bg-gray-50 rounded-2xl border-2 border-dashed border-gray-300 p-6 hover:border-gray-400 transition-all duration-200">
+                              <div className="flex flex-col items-center gap-5">
+                                {hasFile ? (
+                                  doc.isPdf ? (
+                                    <div className="flex flex-col items-center gap-4">
+                                      <div className="w-24 h-24 bg-linear-to-br from-red-100 to-red-200 rounded-2xl flex items-center justify-center shadow-xl border-4 border-white">
+                                        <FaFilePdf className="text-6xl text-red-600" />
+                                      </div>
+
+                                      <div className="text-center max-w-full px-2">
+                                        <p className="text-sm font-semibold text-gray-800 line-clamp-2 wrap-break-word">
+                                          {fileName || 'ملف.pdf'}
+                                        </p>
+                                        {fileName && (
+                                          <p className="text-xs text-gray-500 mt-1">
+                                           Uploaded File
+                                          </p>
+                                        )}
+                                      </div>
+
+                                      <a
+                                        href={`/api/download-cv?url=${encodeURIComponent(student![doc.field as keyof Student] as string)}&name=${encodeURIComponent(fileName || 'Document.pdf')}`}
+                                        className="btn btn-sm btn-error text-white hover:btn-error/90 shadow-md"
+                                        download
+                                      >
+                                        <FaDownload className="mr-2" />
+                                        Download
+                                      </a>
+                                    </div>
+                                  ) : (
+                                    <div
+                                      className="avatar cursor-pointer hover:scale-110 transition-transform duration-300"
+                                      onClick={() => setSelectedImage(student![doc.field as keyof Student] as string)}
+                                    >
+                                      <div className="w-28 h-28 rounded-2xl ring-4 ring-white shadow-2xl overflow-hidden border-4 border-gray-200">
+                                        <Image
+                                          src={student![doc.field as keyof Student] as string}
+                                          alt={doc.label}
+                                          width={112}
+                                          height={112}
+                                          className="object-cover w-full h-full"
+                                        />
+                                      </div>
+                                    </div>
+                                  )
+                                ) : (
+                                  <div className="w-24 h-24 bg-linear-to-br from-gray-200 to-gray-300 rounded-2xl flex items-center justify-center shadow-inner">
+                                    {doc.icon}
+                                  </div>
+                                )}
+
+                                <label className={`btn btn-primary w-full ${imageUploading ? 'btn-disabled' : ''}`}>
+                                  <FaUpload className="mr-2" />
+                                  {imageUploading ? 'Uploading...' : 'Upload File'}
+                                  <input
+                                    type="file"
+                                    className="hidden"
+                                    accept={doc.isPdf ? 'application/pdf' : 'image/*'}
+                                    onChange={(e) => e.target.files?.[0] && handleImageUpload(e.target.files[0], doc.field as keyof Student)}
+                                    disabled={imageUploading}
+                                  />
+                                </label>
+
+                                {hasFile && !doc.isPdf && (
+                                  <span className="text-xs font-medium text-green-600 bg-green-50 px-3 py-1 rounded-full">
+                                    Uploaded
+                                  </span>
+                                )}
+                              </div>
+                            </div>
                           </div>
-                        </div>
-                      ))}
+                        );
+                      })}
                     </div>
                   </div>
                 )}
-
                 {activeSection === 'statistics' && (
                   <div className="space-y-6">
                     <SectionHeader icon={<FaChartBar className="text-white text-xl" />} title="Statistics" color="from-pink-500 to-pink-600" />
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                       <div className="stat bg-gray-50 rounded-2xl border border-gray-200 p-6">
-                        <div className="stat-figure text-blue-500"><FaEye className="inline-block w-8 h-8 stroke-current"/></div>
+                        <div className="stat-figure text-blue-500"><FaEye className="inline-block w-8 h-8 stroke-current" /></div>
                         <div className="stat-title">Profile Visits</div>
                         <div className="stat-value text-3xl">{student.visitCount || 0}</div>
                         <div className="stat-desc">Total profile page views</div>
                       </div>
                       <div className="stat bg-gray-50 rounded-2xl border border-gray-200 p-6">
-                        <div className="stat-figure text-green-500"><FaCalendarAlt className="inline-block w-8 h-8 stroke-current"/></div>
+                        <div className="stat-figure text-green-500"><FaCalendarAlt className="inline-block w-8 h-8 stroke-current" /></div>
                         <div className="stat-title">Last Viewed</div>
                         <div className="stat-value text-xl">{student.lastViewed ? new Date(student.lastViewed).toLocaleString() : 'Never'}</div>
                         <div className="stat-desc">Last time profile was viewed</div>
                       </div>
                       <div className="stat bg-gray-50 rounded-2xl border border-gray-200 p-6">
-                        <div className="stat-figure text-blue-600"><FaLinkedin className="inline-block w-8 h-8"/></div>
+                        <div className="stat-figure text-blue-600"><FaLinkedin className="inline-block w-8 h-8" /></div>
                         <div className="stat-title">LinkedIn Clicks</div>
                         <div className="stat-value text-3xl">{student.linkedinClicks || 0}</div>
                         <div className="stat-desc">LinkedIn profile clicks</div>
                       </div>
                       <div className="stat bg-gray-50 rounded-2xl border border-gray-200 p-6">
-                        <div className="stat-figure text-gray-700"><FaGithub className="inline-block w-8 h-8"/></div>
+                        <div className="stat-figure text-gray-700"><FaGithub className="inline-block w-8 h-8" /></div>
                         <div className="stat-title">GitHub Clicks</div>
                         <div className="stat-value text-3xl">{student.githubClicks || 0}</div>
                         <div className="stat-desc">GitHub profile clicks</div>
