@@ -20,6 +20,7 @@ const StudentSchema = new mongoose.Schema({
   universityId: String,
   validUntil: String,
   cvUrl: String,
+  cvFileName: String,
   github: String,
   linkedin: String,
   whatsapp: String,
@@ -37,6 +38,7 @@ const StudentSchema = new mongoose.Schema({
   nationalIdImage: String,
   universityCardImage: String,
   scheduleImage: String,
+  scheduleImageFileName: String,
   certificate1Image: String,
   visitCount: {
     type: Number,

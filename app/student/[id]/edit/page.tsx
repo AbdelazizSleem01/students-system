@@ -5,41 +5,12 @@ import { Student } from '@/types';
 import Swal from 'sweetalert2';
 import Image from 'next/image';
 import {
-  FaEye,
-  FaEyeSlash,
-  FaUser,
-  FaGraduationCap,
-  FaShareAlt,
-  FaInfoCircle,
-  FaLock,
-  FaSave,
-  FaKey,
-  FaUpload,
-  FaUserCircle,
-  FaUniversity,
-  FaIdCard,
-  FaBook,
-  FaCalendarAlt,
-  FaCheckCircle,
-  FaTimesCircle,
-  FaGithub,
-  FaLinkedin,
-  FaFilePdf,
-  FaWhatsapp,
-  FaInstagram,
-  FaTiktok,
-  FaSpotify,
-  FaFacebook,
-  FaTwitter,
-  FaSnapchat,
-  FaFile,
-  FaCalendar,
-  FaImage,
-  FaEnvelope,
-  FaArrowLeft,
-  FaMobile,
-  FaDesktop,
-  FaChartBar
+  FaEye, FaEyeSlash, FaUser, FaGraduationCap, FaShareAlt, FaInfoCircle,
+  FaLock, FaSave, FaKey, FaUpload, FaUserCircle, FaUniversity, FaIdCard,
+  FaBook, FaCalendarAlt, FaCheckCircle, FaTimesCircle, FaGithub, FaLinkedin,
+  FaFilePdf, FaWhatsapp, FaInstagram, FaTiktok, FaSpotify, FaFacebook,
+  FaTwitter, FaSnapchat, FaFile, FaCalendar, FaEnvelope, FaArrowLeft,
+  FaMobile, FaDesktop, FaChartBar
 } from 'react-icons/fa';
 
 export default function EditStudentPage() {
@@ -108,11 +79,16 @@ export default function EditStudentPage() {
       });
 
       if (response.ok) {
-        const { url } = await response.json();
-        const updatedStudent = { ...student!, [field]: url };
+        const { url, originalName } = await response.json();
+        const updatedStudent = { ...student!, [field]: url } as any;
+
+        if (field === 'cvUrl' || field === 'scheduleImage') {
+          updatedStudent[`${field}FileName`] = originalName;
+        }
+
         setStudent(updatedStudent);
         await handleSave(updatedStudent);
-        Swal.fire('Success!', 'Document uploaded and saved successfully.', 'success');
+        Swal.fire('Success!', 'Document uploaded successfully.', 'success');
       } else {
         throw new Error('Upload failed');
       }
@@ -131,9 +107,7 @@ export default function EditStudentPage() {
     try {
       const response = await fetch(`/api/students/${targetStudent._id}`, {
         method: 'PUT',
-        headers: {
-          'Content-Type': 'application/json',
-        },
+        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(targetStudent),
       });
 
@@ -151,7 +125,6 @@ export default function EditStudentPage() {
 
   const handlePasswordChange = async () => {
     if (!student) return;
-
     const { value: newPassword } = await Swal.fire({
       title: 'Change Edit Password',
       input: 'text',
@@ -159,15 +132,9 @@ export default function EditStudentPage() {
       inputValue: student.editPassword,
       showCancelButton: true,
       inputValidator: (value) => {
-        if (!value || value.length < 3) {
-          return 'Please enter a password with at least 3 characters!';
-        }
-        if (value.length > 50) {
-          return 'Password must be less than 50 characters!';
-        }
-        if (!/^[a-zA-Z0-9]+$/.test(value)) {
-          return 'Password can only contain letters and numbers!';
-        }
+        if (!value || value.length < 3) return 'Please enter a password with at least 3 characters!';
+        if (value.length > 50) return 'Password must be less than 50 characters!';
+        if (!/^[a-zA-Z0-9]+$/.test(value)) return 'Password can only contain letters and numbers!';
       }
     });
 
@@ -177,12 +144,9 @@ export default function EditStudentPage() {
       try {
         const response = await fetch(`/api/students/${student._id}`, {
           method: 'PUT',
-          headers: {
-            'Content-Type': 'application/json',
-          },
+          headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ ...student, editPassword: newPassword }),
         });
-
         if (response.ok) {
           Swal.fire('Success!', 'Password updated successfully!', 'success');
         } else {
@@ -236,21 +200,17 @@ export default function EditStudentPage() {
                   />
                   <button
                     type="button"
-                    className="absolute inset-y-0 right-0 pr-4 flex items-center text-gray-400 hover:text-gray-600 transition-colors"
+                    className="absolute inset-y-0 right-0 pr-4 flex items-center text-gray-400 hover:text-gray-600"
                     onClick={() => setShowPassword(!showPassword)}
                   >
-                    {showPassword ? (
-                      <FaEyeSlash className="h-5 w-5" />
-                    ) : (
-                      <FaEye className="h-5 w-5" />
-                    )}
+                    {showPassword ? <FaEyeSlash className="h-5 w-5" /> : <FaEye className="h-5 w-5" />}
                   </button>
                 </div>
               </div>
               <div className="form-control mt-6">
                 <button
                   type="submit"
-                  className="btn btn-primary w-full py-3 font-semibold rounded-xl bg-linear-to-r from-blue-500 to-purple-600 border-none hover:shadow-lg transition-all"
+                  className="btn btn-primary w-full py-3 font-semibold rounded-xl bg-linear-to-r from-blue-500 to-purple-600 border-none hover:shadow-lg"
                 >
                   {loading ? 'Verifying...' : 'Enter Edit Mode'}
                 </button>
@@ -269,10 +229,7 @@ export default function EditStudentPage() {
           <FaUserCircle className="mx-auto text-6xl text-gray-400 mb-4" />
           <h2 className="text-2xl font-bold text-gray-700 mb-2">No student data available</h2>
           <p className="text-gray-500 mb-4">Unable to load student information</p>
-          <button
-            onClick={() => router.back()}
-            className="btn btn-primary rounded-xl"
-          >
+          <button onClick={() => router.back()} className="btn btn-primary rounded-xl">
             <FaArrowLeft className="mr-2" />
             Go Back
           </button>
@@ -297,9 +254,7 @@ export default function EditStudentPage() {
 
   const SectionHeader = ({ icon, title, color }: { icon: JSX.Element; title: string; color: string }) => (
     <div className="flex items-center gap-3 mb-6">
-      <div className={`p-3 rounded-xl bg-linear-to-r ${color} shadow-lg`}>
-        {icon}
-      </div>
+      <div className={`p-3 rounded-xl bg-linear-to-r ${color} shadow-lg`}>{icon}</div>
       <h2 className="text-2xl font-bold text-gray-800">{title}</h2>
     </div>
   );
@@ -307,18 +262,12 @@ export default function EditStudentPage() {
   return (
     <div className="min-h-screen bg-linear-to-br from-blue-50 to-indigo-100 py-4 md:py-8">
       <div className="container mx-auto px-3 md:px-4">
-        {/* Header Card */}
         <div className="card bg-white shadow-2xl rounded-2xl overflow-hidden border border-gray-200 mb-6">
           <div className="card-body p-4 md:p-6">
             <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
               <div className="flex-1">
-                <div className="flex items-center gap-3 mb-2">
-
-                  <div>
-                    <h1 className="text-2xl md:text-3xl font-bold text-gray-800">Edit {student.name}'s Profile</h1>
-                    <p className="text-gray-600 text-sm md:text-base">Update and manage student information</p>
-                  </div>
-                </div>
+                <h1 className="text-2xl md:text-3xl font-bold text-gray-800">Edit {student.name}'s Profile</h1>
+                <p className="text-gray-600 text-sm md:text-base">Update and manage student information</p>
               </div>
               <div className="flex items-center gap-3">
                 <div className="badge badge-lg bg-linear-to-r from-blue-500 to-purple-500 text-white border-none px-4 py-2 rounded-xl">
@@ -338,7 +287,6 @@ export default function EditStudentPage() {
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
-          {/* Navigation Sidebar */}
           <div className="lg:col-span-1">
             <div className="card bg-white shadow-xl rounded-2xl border border-gray-200 sticky top-6">
               <div className="card-body p-4 md:p-6">
@@ -360,8 +308,7 @@ export default function EditStudentPage() {
                         }`}
                       onClick={() => setActiveSection(item.id)}
                     >
-                      <div className={`p-2 rounded-lg ${activeSection === item.id ? 'bg-white/20' : 'bg-white shadow'
-                        }`}>
+                      <div className={`p-2 rounded-lg ${activeSection === item.id ? 'bg-white/20' : 'bg-white shadow'}`}>
                         {item.icon}
                       </div>
                       <span className="font-medium">{item.label}</span>
@@ -372,35 +319,21 @@ export default function EditStudentPage() {
             </div>
           </div>
 
-          {/* Main Content */}
           <div className="lg:col-span-3">
             <div className="card bg-white shadow-xl rounded-2xl border border-gray-200">
               <div className="card-body p-4 md:p-6">
-                {/* Personal Information */}
+
                 {activeSection === 'personal' && (
                   <div className="space-y-6">
-                    <SectionHeader
-                      icon={<FaUser className="text-white text-xl" />}
-                      title="Personal Information"
-                      color="from-blue-500 to-blue-600"
-                    />
-
+                    <SectionHeader icon={<FaUser className="text-white text-xl" />} title="Personal Information" color="from-blue-500 to-blue-600" />
                     <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                      {/* Profile Image */}
                       <div className="lg:col-span-2">
                         <div className="flex flex-col md:flex-row items-center gap-6 p-6 bg-gray-50 rounded-2xl border border-gray-200">
                           <div className="shrink-0">
-                            {student?.profileImage ? (
+                            {student.profileImage ? (
                               <div className="avatar">
-                                <div className="w-24 h-24 md:w-32 md:h-32 rounded-2xl overflow-hidden border-4 border-white shadow-lg cursor-pointer transition-transform hover:scale-105">
-                                  <Image
-                                    src={student.profileImage}
-                                    alt="Profile"
-                                    width={128}
-                                    height={128}
-                                    className="object-cover w-full h-full"
-                                    onClick={() => setSelectedImage(student.profileImage as string)}
-                                  />
+                                <div className="w-24 h-24 md:w-32 md:h-32 rounded-2xl overflow-hidden border-4 border-white shadow-lg cursor-pointer hover:scale-105 transition-transform">
+                                  <Image src={student.profileImage} alt="Profile" width={128} height={128} className="object-cover w-full h-full" onClick={() => setSelectedImage(student.profileImage as string)} />
                                 </div>
                               </div>
                             ) : (
@@ -415,66 +348,26 @@ export default function EditStudentPage() {
                             <label className="btn btn-primary cursor-pointer rounded-xl bg-linear-to-r from-blue-500 to-purple-500 border-none hover:shadow-lg transition-all">
                               <FaUpload className="mr-2" />
                               {imageUploading ? 'Uploading...' : 'Choose Image'}
-                              <input
-                                type="file"
-                                className="hidden"
-                                accept="image/*"
-                                onChange={(e) => {
-                                  const file = e.target.files?.[0];
-                                  if (file) handleImageUpload(file, 'profileImage');
-                                }}
-                                disabled={imageUploading}
-                              />
+                              <input type="file" className="hidden" accept="image/*" onChange={(e) => e.target.files?.[0] && handleImageUpload(e.target.files[0], 'profileImage')} disabled={imageUploading} />
                             </label>
                           </div>
                         </div>
                       </div>
-
-                      {/* Name and Email */}
                       <div className="form-control">
-                        <label className="label block mb-3">
-                          <span className="label-text font-semibold text-gray-700 flex items-center gap-2">
-                            <FaUser className="text-blue-500" />
-                            Full Name
-                          </span>
-                        </label>
-                        <input
-                          type="text"
-                          className="input input-bordered w-full focus:ring-2 focus:ring-blue-500 focus:border-transparent rounded-xl py-3"
-                          value={student?.name || ''}
-                          onChange={(e) => handleInputChange('name', e.target.value)}
-                          placeholder="Enter full name"
-                        />
+                        <label className="label block mb-3"><span className="label-text font-semibold text-gray-700 flex items-center gap-2"><FaUser className="text-blue-500" />Full Name</span></label>
+                        <input type="text" className="input input-bordered w-full focus:ring-2 focus:ring-blue-500 rounded-xl py-3" value={student.name || ''} onChange={(e) => handleInputChange('name', e.target.value)} placeholder="Enter full name" />
                       </div>
-
                       <div className="form-control">
-                        <label className="label block mb-3">
-                          <span className="label-text font-semibold text-gray-700 flex items-center gap-2">
-                            <FaEnvelope className="text-blue-500" />
-                            Email Address
-                          </span>
-                        </label>
-                        <input
-                          type="email"
-                          className="input input-bordered w-full focus:ring-2 focus:ring-blue-500 focus:border-transparent rounded-xl py-3"
-                          value={student?.email || ''}
-                          onChange={(e) => handleInputChange('email', e.target.value)}
-                          placeholder="Enter email address"
-                        />
+                        <label className="label block mb-3"><span className="label-text font-semibold text-gray-700 flex items-center gap-2"><FaEnvelope className="text-blue-500" />Email Address</span></label>
+                        <input type="email" className="input input-bordered w-full focus:ring-2 focus:ring-blue-500 rounded-xl py-3" value={student.email || ''} onChange={(e) => handleInputChange('email', e.target.value)} placeholder="Enter email address" />
                       </div>
                     </div>
                   </div>
                 )}
 
-                {/* Academic Information */}
                 {activeSection === 'academic' && (
                   <div className="space-y-6">
-                    <SectionHeader
-                      icon={<FaGraduationCap className="text-white text-xl" />}
-                      title="Academic Information"
-                      color="from-green-500 to-green-600"
-                    />
-
+                    <SectionHeader icon={<FaGraduationCap className="text-white text-xl" />} title="Academic Information" color="from-green-500 to-green-600" />
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                       {[
                         { icon: <FaUniversity />, field: 'university', label: 'University', placeholder: 'Enter university name' },
@@ -483,68 +376,31 @@ export default function EditStudentPage() {
                         { icon: <FaBook />, field: 'major', label: 'Major', placeholder: 'Enter major' },
                       ].map((item) => (
                         <div key={item.field} className="form-control">
-                          <label className="label block mb-3">
-                            <span className="label-text font-semibold text-gray-700 flex items-center gap-2">
-                              {item.icon}
-                              {item.label}
-                            </span>
-                          </label>
-                          <input
-                            type="text"
-                            className="input input-bordered w-full focus:ring-2 focus:ring-green-500 focus:border-transparent rounded-xl py-3"
-                            value={student?.[item.field as keyof Student] as string || ''}
-                            onChange={(e) => handleInputChange(item.field as keyof Student, e.target.value)}
-                            placeholder={item.placeholder}
-                          />
+                          <label className="label block mb-3"><span className="label-text font-semibold text-gray-700 flex items-center gap-2">{item.icon}{item.label}</span></label>
+                          <input type="text" className="input input-bordered w-full focus:ring-2 focus:ring-green-500 rounded-xl py-3" value={(student as any)[item.field] || ''} onChange={(e) => handleInputChange(item.field as keyof Student, e.target.value)} placeholder={item.placeholder} />
                         </div>
                       ))}
                     </div>
                   </div>
                 )}
 
-                {/* Social Links */}
                 {activeSection === 'social' && (
                   <div className="space-y-6">
-                    <SectionHeader
-                      icon={<FaShareAlt className="text-white text-xl" />}
-                      title="Social Links"
-                      color="from-purple-500 to-purple-600"
-                    />
-
+                    <SectionHeader icon={<FaShareAlt className="text-white text-xl" />} title="Social Links" color="from-purple-500 to-purple-600" />
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                      {[
-                        'github', 'linkedin', 'cvUrl', 'whatsapp', 'instagram',
-                        'tiktok', 'spotify', 'facebook', 'x', 'threads', 'snapchat'
-                      ].map((platform) => (
+                      {['github','linkedin','whatsapp','instagram','tiktok','spotify','facebook','x','threads','snapchat'].map((platform) => (
                         <div key={platform} className="form-control">
-                          <label className="label block mb-3">
-                            <span className="label-text font-semibold text-gray-700 flex items-center gap-2">
-                              {socialIcons[platform] || <FaShareAlt />}
-                              {platform === 'cvUrl' ? 'CV/Resume' : platform.charAt(0).toUpperCase() + platform.slice(1)}
-                            </span>
-                          </label>
-                          <input
-                            type="url"
-                            className="input input-bordered w-full focus:ring-2 focus:ring-purple-500 focus:border-transparent rounded-xl py-3"
-                            value={student?.[platform as keyof Student] as string || ''}
-                            onChange={(e) => handleInputChange(platform as keyof Student, e.target.value)}
-                            placeholder={`Enter ${platform === 'cvUrl' ? 'CV/Resume' : platform} URL`}
-                          />
+                          <label className="label block mb-3"><span className="label-text font-semibold text-gray-700 flex items-center gap-2">{socialIcons[platform] || <FaShareAlt />}{platform.charAt(0).toUpperCase() + platform.slice(1)}</span></label>
+                          <input type="url" className="input input-bordered w-full focus:ring-2 focus:ring-purple-500 rounded-xl py-3" value={(student as any)[platform] || ''} onChange={(e) => handleInputChange(platform as keyof Student, e.target.value)} placeholder={`Enter ${platform} URL`} />
                         </div>
                       ))}
                     </div>
                   </div>
                 )}
 
-                {/* Additional Information */}
                 {activeSection === 'additional' && (
                   <div className="space-y-6">
-                    <SectionHeader
-                      icon={<FaInfoCircle className="text-white text-xl" />}
-                      title="Additional Information"
-                      color="from-orange-500 to-orange-600"
-                    />
-
+                    <SectionHeader icon={<FaInfoCircle className="text-white text-xl" />} title="Additional Information" color="from-orange-500 to-orange-600" />
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                       {[
                         { icon: <FaCalendar />, field: 'academicYear', label: 'Academic Year', type: 'text', placeholder: 'Enter academic year' },
@@ -552,34 +408,13 @@ export default function EditStudentPage() {
                         { icon: <FaCalendarAlt />, field: 'validUntil', label: 'Valid Until', type: 'date' },
                       ].map((item) => (
                         <div key={item.field} className="form-control">
-                          <label className="label block mb-3">
-                            <span className="label-text font-semibold text-gray-700 flex items-center gap-2">
-                              {item.icon}
-                              {item.label}
-                            </span>
-                          </label>
-                          <input
-                            type={item.type as 'text' | 'date'}
-                            className="input input-bordered w-full focus:ring-2 focus:ring-orange-500 focus:border-transparent rounded-xl py-3"
-                            value={student?.[item.field as keyof Student] as string || ''}
-                            onChange={(e) => handleInputChange(item.field as keyof Student, e.target.value)}
-                            placeholder={item.placeholder}
-                          />
+                          <label className="label block mb-3"><span className="label-text font-semibold text-gray-700 flex items-center gap-2">{item.icon}{item.label}</span></label>
+                          <input type={item.type as 'text'|'date'} className="input input-bordered w-full focus:ring-2 focus:ring-orange-500 rounded-xl py-3" value={(student as any)[item.field] || ''} onChange={(e) => handleInputChange(item.field as keyof Student, e.target.value)} placeholder={item.placeholder} />
                         </div>
                       ))}
-
                       <div className="form-control">
-                        <label className="label block mb-3">
-                          <span className="label-text font-semibold text-gray-700 flex items-center gap-2">
-                            <FaCheckCircle />
-                            Status
-                          </span>
-                        </label>
-                        <select
-                          className="select select-bordered w-full focus:ring-2 focus:ring-orange-500 focus:border-transparent rounded-xl py-3"
-                          value={student?.status || 'active'}
-                          onChange={(e) => handleInputChange('status', e.target.value)}
-                        >
+                        <label className="label block mb-3"><span className="label-text font-semibold text-gray-700 flex items-center gap-2"><FaCheckCircle />Status</span></label>
+                        <select className="select select-bordered w-full focus:ring-2 focus:ring-orange-500 rounded-xl py-3" value={student.status || 'active'} onChange={(e) => handleInputChange('status', e.target.value)}>
                           <option value="active">Active</option>
                           <option value="inactive">Inactive</option>
                         </select>
@@ -588,41 +423,50 @@ export default function EditStudentPage() {
                   </div>
                 )}
 
-                {/* Documents */}
                 {activeSection === 'documents' && (
                   <div className="space-y-6">
-                    <SectionHeader
-                      icon={<FaFile className="text-white text-xl" />}
-                      title="Documents"
-                      color="from-teal-500 to-teal-600"
-                    />
-
+                    <SectionHeader icon={<FaFile className="text-white text-xl" />} title="Documents" color="from-teal-500 to-teal-600" />
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                       {[
                         { field: 'officialDocumentsImage', label: 'Official Documents', icon: <FaFilePdf /> },
                         { field: 'nationalIdImage', label: 'National ID', icon: <FaIdCard /> },
                         { field: 'universityCardImage', label: 'University Card', icon: <FaUniversity /> },
-                        { field: 'scheduleImage', label: 'Schedule', icon: <FaCalendarAlt /> },
                         { field: 'certificate1Image', label: 'Certificate 1', icon: <FaCheckCircle /> },
+                        { field: 'scheduleImage', label: 'Schedule', icon: <FaCalendarAlt /> },
+                        { field: 'cvUrl', label: 'CV/Resume', icon: <FaFilePdf /> },
                       ].map((doc) => (
                         <div key={doc.field} className="form-control">
-                          <label className="label block mb-3">
-                            <span className="label-text font-semibold text-gray-700">{doc.label}</span>
-                          </label>
+                          <label className="label block mb-3"><span className="label-text font-semibold text-gray-700">{doc.label}</span></label>
                           <div className="flex flex-col items-center gap-4 p-4 bg-gray-50 rounded-2xl border border-gray-200">
                             {student?.[doc.field as keyof Student] ? (
-                              <div className="avatar cursor-pointer transition-transform hover:scale-105">
-                                <div className="w-20 h-20 rounded-xl overflow-hidden border-4 border-white shadow-lg">
-                                  <Image
-                                    src={student[doc.field as keyof Student] as string}
-                                    alt={doc.label}
-                                    width={80}
-                                    height={80}
-                                    className="object-cover w-full h-full"
-                                    onClick={() => setSelectedImage(student[doc.field as keyof Student] as string)}
-                                  />
+                              ['cvUrl', 'scheduleImage'].includes(doc.field) ? (
+                                <div className="flex flex-col items-center gap-3">
+                                  <div className="w-20 h-20 rounded-xl bg-linear-to-br from-red-200 to-red-300 flex items-center justify-center border-4 border-white shadow-lg">
+                                    <a
+                                      href={`/api/download-cv?url=${encodeURIComponent(student[doc.field as keyof Student] as string)}&name=${encodeURIComponent((student as any)[`${doc.field}FileName`] || 'Document.pdf')}`}
+                                      className="flex items-center justify-center w-full h-full"
+                                    >
+                                      <FaFilePdf className="text-4xl text-red-600" />
+                                    </a>
+                                  </div>
+                                  <p className="text-sm text-gray-600 font-medium text-center truncate max-w-full">
+                                    {(student as any)[`${doc.field}FileName`] || doc.label}
+                                  </p>
                                 </div>
-                              </div>
+                              ) : (
+                                <div className="avatar cursor-pointer hover:scale-105 transition-transform">
+                                  <div className="w-20 h-20 rounded-xl overflow-hidden border-4 border-white shadow-lg">
+                                    <Image
+                                      src={student[doc.field as keyof Student] as string}
+                                      alt={doc.label}
+                                      width={80}
+                                      height={80}
+                                      className="object-cover w-full h-full"
+                                      onClick={() => setSelectedImage(student[doc.field as keyof Student] as string)}
+                                    />
+                                  </div>
+                                </div>
+                              )
                             ) : (
                               <div className="w-20 h-20 rounded-xl bg-linear-to-br from-gray-200 to-gray-300 flex items-center justify-center shadow-lg">
                                 {doc.icon}
@@ -634,11 +478,8 @@ export default function EditStudentPage() {
                               <input
                                 type="file"
                                 className="hidden"
-                                accept="image/*"
-                                onChange={(e) => {
-                                  const file = e.target.files?.[0];
-                                  if (file) handleImageUpload(file, doc.field as keyof Student);
-                                }}
+                                accept={['cvUrl', 'scheduleImage'].includes(doc.field) ? 'application/pdf' : 'image/*'}
+                                onChange={(e) => e.target.files?.[0] && handleImageUpload(e.target.files[0], doc.field as keyof Student)}
                                 disabled={imageUploading}
                               />
                             </label>
@@ -649,53 +490,30 @@ export default function EditStudentPage() {
                   </div>
                 )}
 
-                {/* Statistics */}
                 {activeSection === 'statistics' && (
                   <div className="space-y-6">
-                    <SectionHeader
-                      icon={<FaChartBar className="text-white text-xl" />}
-                      title="Statistics"
-                      color="from-pink-500 to-pink-600"
-                    />
-
+                    <SectionHeader icon={<FaChartBar className="text-white text-xl" />} title="Statistics" color="from-pink-500 to-pink-600" />
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                      {/* Visit Count */}
                       <div className="stat bg-gray-50 rounded-2xl border border-gray-200 p-6">
-                        <div className="stat-figure text-blue-500">
-                          <FaEye className="inline-block w-8 h-8 stroke-current"/>
-                        </div>
+                        <div className="stat-figure text-blue-500"><FaEye className="inline-block w-8 h-8 stroke-current"/></div>
                         <div className="stat-title">Profile Visits</div>
                         <div className="stat-value text-3xl">{student.visitCount || 0}</div>
                         <div className="stat-desc">Total profile page views</div>
                       </div>
-
-                      {/* Last Viewed */}
                       <div className="stat bg-gray-50 rounded-2xl border border-gray-200 p-6">
-                        <div className="stat-figure text-green-500">
-                          <FaCalendarAlt className="inline-block w-8 h-8 stroke-current"/>
-                        </div>
+                        <div className="stat-figure text-green-500"><FaCalendarAlt className="inline-block w-8 h-8 stroke-current"/></div>
                         <div className="stat-title">Last Viewed</div>
-                        <div className="stat-value text-xl">
-                          {student.lastViewed ? new Date(student.lastViewed).toLocaleString() : 'Never'}
-                        </div>
+                        <div className="stat-value text-xl">{student.lastViewed ? new Date(student.lastViewed).toLocaleString() : 'Never'}</div>
                         <div className="stat-desc">Last time profile was viewed</div>
                       </div>
-
-                      {/* LinkedIn Clicks */}
                       <div className="stat bg-gray-50 rounded-2xl border border-gray-200 p-6">
-                        <div className="stat-figure text-blue-600">
-                          <FaLinkedin className="inline-block w-8 h-8"/>
-                        </div>
+                        <div className="stat-figure text-blue-600"><FaLinkedin className="inline-block w-8 h-8"/></div>
                         <div className="stat-title">LinkedIn Clicks</div>
                         <div className="stat-value text-3xl">{student.linkedinClicks || 0}</div>
                         <div className="stat-desc">LinkedIn profile clicks</div>
                       </div>
-
-                      {/* GitHub Clicks */}
                       <div className="stat bg-gray-50 rounded-2xl border border-gray-200 p-6">
-                        <div className="stat-figure text-gray-700">
-                          <FaGithub className="inline-block w-8 h-8"/>
-                        </div>
+                        <div className="stat-figure text-gray-700"><FaGithub className="inline-block w-8 h-8"/></div>
                         <div className="stat-title">GitHub Clicks</div>
                         <div className="stat-value text-3xl">{student.githubClicks || 0}</div>
                         <div className="stat-desc">GitHub profile clicks</div>
@@ -704,25 +522,12 @@ export default function EditStudentPage() {
                   </div>
                 )}
 
-                {/* Action Buttons */}
                 <div className="flex flex-col sm:flex-row gap-4 justify-end items-center mt-8 pt-6 border-t border-gray-200">
-                  <button
-                    onClick={handlePasswordChange}
-                    className="btn btn-warning gap-2 text-white rounded-xl w-full sm:w-auto bg-linear-to-r from-orange-500 to-red-500 border-none hover:shadow-lg transition-all"
-                  >
-                    <FaKey />
-                    Change Password
+                  <button onClick={handlePasswordChange} className="btn btn-warning gap-2 text-white rounded-xl w-full sm:w-auto bg-linear-to-r from-orange-500 to-red-500 border-none hover:shadow-lg">
+                    <FaKey />Change Password
                   </button>
-                  <button
-                    onClick={() => handleSave()}
-                    className="btn btn-primary gap-2 rounded-xl w-full sm:w-auto bg-linear-to-r from-blue-500 to-purple-500 border-none hover:shadow-lg transition-all"
-                    disabled={saving}
-                  >
-                    {saving ? (
-                      <span className="loading loading-spinner"></span>
-                    ) : (
-                      <FaSave />
-                    )}
+                  <button onClick={() => handleSave()} className="btn btn-primary gap-2 rounded-xl w-full sm:w-auto bg-linear-to-r from-blue-500 to-purple-500 border-none hover:shadow-lg" disabled={saving}>
+                    {saving ? <span className="loading loading-spinner"></span> : <FaSave />}
                     {saving ? 'Saving...' : 'Save Changes'}
                   </button>
                 </div>
@@ -732,23 +537,13 @@ export default function EditStudentPage() {
         </div>
       </div>
 
-      {/* Image Modal */}
       {selectedImage && (
         <div className="modal modal-open">
           <div className="modal-box w-11/12 h-3/4 max-w-4xl p-0 relative bg-transparent shadow-none">
             <div className="w-full h-full flex items-center justify-center">
               <div className="relative bg-white rounded-2xl overflow-hidden shadow-2xl max-w-4xl max-h-full">
-                <Image
-                  src={selectedImage}
-                  alt="Full size"
-                  width={800}
-                  height={600}
-                  className="w-full h-full object-contain max-h-[70vh]"
-                />
-                <button
-                  className="absolute top-4 right-4 btn btn-circle btn-ghost text-white bg-black/50 hover:bg-black/70 border-none"
-                  onClick={() => setSelectedImage(null)}
-                >
+                <Image src={selectedImage} alt="Full size" width={800} height={600} className="w-full h-full object-contain max-h-[70vh]" />
+                <button className="absolute top-4 right-4 btn btn-circle btn-ghost text-white bg-black/50 hover:bg-black/70 border-none" onClick={() => setSelectedImage(null)}>
                   <FaTimesCircle className="text-xl" />
                 </button>
               </div>

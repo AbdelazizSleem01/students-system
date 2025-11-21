@@ -12,6 +12,7 @@ export interface Student {
   universityId: string;
   validUntil: string;
   cvUrl?: string;
+  cvFileName?: string;
   github?: string;
   linkedin?: string;
   whatsapp?: string;
@@ -31,6 +32,7 @@ export interface Student {
   nationalIdImage?: string;
   universityCardImage?: string;
   scheduleImage?: string;
+  scheduleImageFileName?: string;
   certificate1Image?: string;
   // Statistics fields
   visitCount: number;

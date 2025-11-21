@@ -1,4 +1,3 @@
-// app/api/upload/route.ts
 import { NextRequest, NextResponse } from "next/server";
 import { v2 as cloudinary } from "cloudinary";
 
@@ -17,20 +16,26 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: "No file provided" }, { status: 400 });
     }
 
+    if (file.type !== "application/pdf") {
+      return NextResponse.json(
+        { error: "Only PDF files are allowed" },
+        { status: 400 }
+      );
+    }
+
     const bytes = await file.arrayBuffer();
     const buffer = Buffer.from(bytes);
-
-    const isPdf = file.type === "application/pdf";
-    const resourceType = isPdf ? "raw" : "image";
 
     const result: any = await new Promise((resolve, reject) => {
       cloudinary.uploader
         .upload_stream(
           {
-            resource_type: resourceType as any,
-            folder: isPdf ? "student-documents" : "student-images",
+            resource_type: "raw",
+            folder: "student-cvs",
+            public_id: file.name.replace(/\s+/g, "_").replace(/\.pdf$/i, ""),
             use_filename: true,
             unique_filename: false,
+            overwrite: true,
           },
           (error, result) => {
             if (error) reject(error);
@@ -40,18 +45,18 @@ export async function POST(request: NextRequest) {
         .end(buffer);
     });
 
-    let url = result.secure_url;
+    const originalUrl = result.secure_url;
 
-    if (isPdf) {
-      url = url.replace("/upload/", "/upload/fl_attachment/");
-    }
-
-    return NextResponse.json({
-      url,
-      originalName: file.name,
-    });
-  } catch (error) {
-    console.error("Upload error:", error);
-    return NextResponse.json({ error: "Error uploading file" }, { status: 500 });
+    const downloadUrl = originalUrl.replace(
+      "/upload/",
+      "/upload/fl_attachment/"
+    );
+    return NextResponse.json({ url: downloadUrl, originalName: file.name });
+  } catch (error: any) {
+    console.error("PDF Upload Error:", error);
+    return NextResponse.json(
+      { error: "Failed to upload PDF", details: error.message },
+      { status: 500 }
+    );
   }
 }

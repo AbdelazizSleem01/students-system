@@ -1,7 +1,7 @@
 'use client';
 
 import React from 'react';
-import { FaGithub, FaLinkedin, FaFilePdf } from 'react-icons/fa';
+import { FaGithub, FaLinkedin, FaFilePdf, FaDownload } from 'react-icons/fa';
 
 interface SocialLink {
   icon: 'github' | 'linkedin' | 'cv';
@@ -9,6 +9,7 @@ interface SocialLink {
   actualUrl: string;
   label: string;
   isDownload?: boolean;
+  downloadName?: string;
 }
 
 interface Props {
@@ -24,7 +25,6 @@ const iconMap = {
 export default function SocialLinksClient({ links }: Props) {
   const trackClick = (analyticsUrl?: string) => {
     if (!analyticsUrl) return;
-
     if (navigator.sendBeacon) {
       navigator.sendBeacon(analyticsUrl);
     } else {
@@ -34,19 +34,22 @@ export default function SocialLinksClient({ links }: Props) {
 
   return (
     <div className="flex justify-center gap-5 my-8 flex-wrap">
-      {links.map(({ icon, analyticsUrl, actualUrl, label, isDownload }) => {
+      {links.map(({ icon, analyticsUrl, actualUrl, label, isDownload, downloadName }) => {
         const Icon = iconMap[icon];
 
         if (isDownload) {
+          const proxyUrl = `/api/download-cv?url=${encodeURIComponent(actualUrl)}&name=${encodeURIComponent(downloadName || 'CV.pdf')}`;
+
           return (
             <a
               key={label}
-              href={actualUrl}
-              download
-              className="bg-indigo-50 hover:bg-indigo-100 text-indigo-600 p-4 rounded-xl flex items-center gap-3 transition-all hover:scale-110 shadow-lg font-medium cursor-pointer select-none"
+              href={proxyUrl}
+              download={downloadName}
+              className="bg-red-50 hover:bg-red-100 text-red-600 p-4 rounded-xl flex items-center gap-3 transition-all hover:scale-110 shadow-lg font-medium cursor-pointer select-none border-2 border-red-200"
             >
-              <Icon className="text-xl" />
+              <FaFilePdf className="text-2xl" />
               <span>{label}</span>
+              <FaDownload className="text-lg" />
             </a>
           );
         }
