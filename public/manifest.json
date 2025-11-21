@@ -1,0 +1,27 @@
+{
+  "name": "Student ID System",
+  "short_name": "Student ID",
+  "description": "A comprehensive student profile and ID management system",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#1f2937",
+  "icons": [
+    {
+      "src": "/icons8-id-16.png",
+      "sizes": "16x16",
+      "type": "image/png"
+    },
+    {
+      "src": "/icons8-id-32.png",
+      "sizes": "32x32",
+      "type": "image/png"
+    },
+    {
+      "src": "/icons8-id-color-96.png",
+      "sizes": "96x96",
+      "type": "image/png",
+      "purpose": "maskable"
+    }
+  ]
+}
