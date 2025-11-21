@@ -312,12 +312,7 @@ export default function EditStudentPage() {
             <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
               <div className="flex-1">
                 <div className="flex items-center gap-3 mb-2">
-                  <button 
-                    onClick={() => router.back()} 
-                    className="btn btn-ghost btn-circle hover:bg-gray-100 transition-colors"
-                  >
-                    <FaArrowLeft className="text-gray-600" />
-                  </button>
+                 
                   <div>
                     <h1 className="text-2xl md:text-3xl font-bold text-gray-800">Edit {student.name}'s Profile</h1>
                     <p className="text-gray-600 text-sm md:text-base">Update and manage student information</p>
@@ -358,7 +353,7 @@ export default function EditStudentPage() {
                   ].map((item) => (
                     <button
                       key={item.id}
-                      className={`w-full text-left p-4 rounded-xl transition-all duration-200 flex items-center gap-3 ${
+                      className={`w-full text-left p-4 rounded-xl cursor-pointer transition-all duration-200 flex items-center gap-3 ${
                         activeSection === item.id 
                           ? `bg-linear-to-r ${item.color} text-white shadow-lg transform -translate-y-0.5` 
                           : 'bg-gray-50 text-gray-700 hover:bg-gray-100 hover:shadow-md'
