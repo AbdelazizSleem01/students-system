@@ -38,7 +38,8 @@ import {
   FaEnvelope,
   FaArrowLeft,
   FaMobile,
-  FaDesktop
+  FaDesktop,
+  FaChartBar
 } from 'react-icons/fa';
 
 export default function EditStudentPage() {
@@ -348,7 +349,8 @@ export default function EditStudentPage() {
                     { id: 'academic', icon: <FaGraduationCap />, label: 'Academic', color: 'from-green-500 to-green-600' },
                     { id: 'social', icon: <FaShareAlt />, label: 'Social Links', color: 'from-purple-500 to-purple-600' },
                     { id: 'additional', icon: <FaInfoCircle />, label: 'Additional', color: 'from-orange-500 to-orange-600' },
-                    { id: 'documents', icon: <FaFile />, label: 'Documents', color: 'from-teal-500 to-teal-600' }
+                    { id: 'documents', icon: <FaFile />, label: 'Documents', color: 'from-teal-500 to-teal-600' },
+                    { id: 'statistics', icon: <FaChartBar />, label: 'Statistics', color: 'from-pink-500 to-pink-600' }
                   ].map((item) => (
                     <button
                       key={item.id}
@@ -643,6 +645,61 @@ export default function EditStudentPage() {
                           </div>
                         </div>
                       ))}
+                    </div>
+                  </div>
+                )}
+
+                {/* Statistics */}
+                {activeSection === 'statistics' && (
+                  <div className="space-y-6">
+                    <SectionHeader
+                      icon={<FaChartBar className="text-white text-xl" />}
+                      title="Statistics"
+                      color="from-pink-500 to-pink-600"
+                    />
+
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                      {/* Visit Count */}
+                      <div className="stat bg-gray-50 rounded-2xl border border-gray-200 p-6">
+                        <div className="stat-figure text-blue-500">
+                          <FaEye className="inline-block w-8 h-8 stroke-current"/>
+                        </div>
+                        <div className="stat-title">Profile Visits</div>
+                        <div className="stat-value text-3xl">{student.visitCount || 0}</div>
+                        <div className="stat-desc">Total profile page views</div>
+                      </div>
+
+                      {/* Last Viewed */}
+                      <div className="stat bg-gray-50 rounded-2xl border border-gray-200 p-6">
+                        <div className="stat-figure text-green-500">
+                          <FaCalendarAlt className="inline-block w-8 h-8 stroke-current"/>
+                        </div>
+                        <div className="stat-title">Last Viewed</div>
+                        <div className="stat-value text-xl">
+                          {student.lastViewed ? new Date(student.lastViewed).toLocaleString() : 'Never'}
+                        </div>
+                        <div className="stat-desc">Last time profile was viewed</div>
+                      </div>
+
+                      {/* LinkedIn Clicks */}
+                      <div className="stat bg-gray-50 rounded-2xl border border-gray-200 p-6">
+                        <div className="stat-figure text-blue-600">
+                          <FaLinkedin className="inline-block w-8 h-8"/>
+                        </div>
+                        <div className="stat-title">LinkedIn Clicks</div>
+                        <div className="stat-value text-3xl">{student.linkedinClicks || 0}</div>
+                        <div className="stat-desc">LinkedIn profile clicks</div>
+                      </div>
+
+                      {/* GitHub Clicks */}
+                      <div className="stat bg-gray-50 rounded-2xl border border-gray-200 p-6">
+                        <div className="stat-figure text-gray-700">
+                          <FaGithub className="inline-block w-8 h-8"/>
+                        </div>
+                        <div className="stat-title">GitHub Clicks</div>
+                        <div className="stat-value text-3xl">{student.githubClicks || 0}</div>
+                        <div className="stat-desc">GitHub profile clicks</div>
+                      </div>
                     </div>
                   </div>
                 )}

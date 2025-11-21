@@ -32,6 +32,11 @@ export interface Student {
   universityCardImage?: string;
   scheduleImage?: string;
   certificate1Image?: string;
+  // Statistics fields
+  visitCount: number;
+  lastViewed?: Date;
+  linkedinClicks: number;
+  githubClicks: number;
 }
 
 export interface Admin {

@@ -38,6 +38,20 @@ const StudentSchema = new mongoose.Schema({
   universityCardImage: String,
   scheduleImage: String,
   certificate1Image: String,
+  // Statistics fields
+  visitCount: {
+    type: Number,
+    default: 0,
+  },
+  lastViewed: Date,
+  linkedinClicks: {
+    type: Number,
+    default: 0,
+  },
+  githubClicks: {
+    type: Number,
+    default: 0,
+  },
 }, {
   timestamps: true,
 });
