@@ -6,7 +6,7 @@ import { FaExpand, FaFilePdf, FaDownload } from 'react-icons/fa';
 import { FaX } from 'react-icons/fa6';
 
 interface DocumentsGalleryProps {
-  nationalIdImage?: string;
+  officialDocumentsImage?: string;
   universityCardImage?: string;
   certificate1Image?: string;
   scheduleImage?: string;
@@ -14,14 +14,14 @@ interface DocumentsGalleryProps {
 }
 
 const documents = [
-  { key: 'nationalIdImage' as const, label: 'National ID', type: 'image' },
+  { key: 'officialDocumentsImage' as const, label: 'National ID', type: 'image' },
   { key: 'universityCardImage' as const, label: 'University Card', type: 'image' },
   { key: 'certificate1Image' as const, label: 'Certificate', type: 'image' },
   { key: 'scheduleImage' as const, label: 'Schedule', type: 'pdf' },
 ];
 
 export default function DocumentsGallery({
-  nationalIdImage,
+  officialDocumentsImage,
   universityCardImage,
   certificate1Image,
   scheduleImage,
@@ -33,7 +33,7 @@ export default function DocumentsGallery({
     .map(doc => ({
       ...doc,
       url: {
-        nationalIdImage,
+        officialDocumentsImage,
         universityCardImage,
         certificate1Image,
         scheduleImage,
@@ -101,7 +101,6 @@ export default function DocumentsGallery({
         ))}
       </div>
 
-      {/* المودال شغال 100% دلوقتي */}
       {modalImage && (
         <div
           className="fixed inset-0 z-50 flex items-center justify-center p-6 bg-white/95 backdrop-blur-md"

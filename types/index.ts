@@ -34,7 +34,6 @@ export interface Student {
   scheduleImage?: string;
   scheduleImageFileName?: string;
   certificate1Image?: string;
-  // Statistics fields
   visitCount: number;
   lastViewed?: Date;
   linkedinClicks: number;
