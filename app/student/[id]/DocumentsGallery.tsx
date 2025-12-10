@@ -91,7 +91,7 @@ export default function DocumentsGallery({
                       sizes="(max-width: 768px) 100vw, (max-width: 1024px) 50vw, 25vw"
                       unoptimized
                     />
-                    <div className="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-30 transition-all duration-300 flex items-center justify-center rounded-t-2xl pointer-events-none">
+                    <div className="absolute inset-0  bg-opacity-0 group-hover:bg-opacity-30 transition-all duration-300 flex items-center justify-center rounded-t-2xl pointer-events-none">
                       <FaExpand className="text-white text-4xl opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
                     </div>
                   </>
