@@ -62,9 +62,9 @@ export default function DocumentsGallery({
             onClick={() => type === 'image' && url && openModal(url)}
           >
             <div className="bg-white rounded-2xl shadow-lg overflow-hidden border border-gray-200">
-              <div className="aspect-3/4 relative bg-linear-to-br from-gray-50 to-gray-100 flex items-center justify-center p-4">
+              <div className="aspect-3/4 relative bg-linear-to-br from-gray-50 to-gray-100 overflow-hidden">
                 {type === 'pdf' ? (
-                  <div className="flex flex-col items-center gap-4 text-center">
+                  <div className="w-full h-full flex flex-col items-center justify-center gap-4 text-center p-4">
                     <div className="w-20 h-20 rounded-2xl bg-linear-to-br from-red-100 to-red-200 flex items-center justify-center shadow-xl border-4 border-white">
                       <FaFilePdf className="text-5xl text-red-600" />
                     </div>
@@ -85,12 +85,13 @@ export default function DocumentsGallery({
                     <Image
                       src={url!}
                       alt={label}
-                      fill
-                      className="object-cover rounded-t-2xl"
-                      sizes="(max-width: 768px) 45vw, (max-width: 1024px) 30vw, 20vw"
+                      width={300}
+                      height={400}
+                      className="w-full h-full object-cover rounded-t-2xl"
+                      sizes="(max-width: 768px) 100vw, (max-width: 1024px) 50vw, 25vw"
                       unoptimized
                     />
-                    <div className="absolute inset-0  bg-opacity-0 group-hover:bg-opacity-30 transition-all duration-300 flex items-center justify-center rounded-t-2xl pointer-events-none">
+                    <div className="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-30 transition-all duration-300 flex items-center justify-center rounded-t-2xl pointer-events-none">
                       <FaExpand className="text-white text-4xl opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
                     </div>
                   </>
