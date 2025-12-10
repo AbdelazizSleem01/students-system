@@ -6,6 +6,7 @@ import { FaExpand, FaFilePdf, FaDownload } from 'react-icons/fa';
 import { FaX } from 'react-icons/fa6';
 
 interface DocumentsGalleryProps {
+  officialDocumentsImage?: string;
   nationalIdImage?: string;
   universityCardImage?: string;
   certificate1Image?: string;
@@ -14,6 +15,7 @@ interface DocumentsGalleryProps {
 }
 
 const documents = [
+  { key: 'officialDocumentsImage' as const, label: 'Official Documents', type: 'image' },
   { key: 'nationalIdImage' as const, label: 'National ID', type: 'image' },
   { key: 'universityCardImage' as const, label: 'University Card', type: 'image' },
   { key: 'certificate1Image' as const, label: 'Certificate', type: 'image' },
@@ -21,6 +23,7 @@ const documents = [
 ];
 
 export default function DocumentsGallery({
+  officialDocumentsImage,
   nationalIdImage,
   universityCardImage,
   certificate1Image,
@@ -33,6 +36,7 @@ export default function DocumentsGallery({
     .map(doc => ({
       ...doc,
       url: {
+        officialDocumentsImage,
         nationalIdImage,
         universityCardImage,
         certificate1Image,
@@ -84,7 +88,7 @@ export default function DocumentsGallery({
                       fill
                       className="object-cover rounded-t-2xl"
                       sizes="(max-width: 768px) 45vw, (max-width: 1024px) 30vw, 20vw"
-                      unoptimized 
+                      unoptimized
                     />
                     <div className="absolute inset-0  bg-opacity-0 group-hover:bg-opacity-30 transition-all duration-300 flex items-center justify-center rounded-t-2xl pointer-events-none">
                       <FaExpand className="text-white text-4xl opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
@@ -114,7 +118,7 @@ export default function DocumentsGallery({
               }}
               className="btn btn-circle btn-md absolute -top-5 -right-4 font-light z-10 bg-gray-300"
             >
-              <FaX/>
+              <FaX />
             </button>
             <div className="bg-white rounded-3xl shadow-2xl overflow-hidden p-4 border border-gray-200">
               <Image
