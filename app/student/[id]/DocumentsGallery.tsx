@@ -6,7 +6,6 @@ import { FaExpand, FaFilePdf, FaDownload } from 'react-icons/fa';
 import { FaX } from 'react-icons/fa6';
 
 interface DocumentsGalleryProps {
-
   nationalIdImage?: string;
   universityCardImage?: string;
   certificate1Image?: string;
@@ -14,15 +13,7 @@ interface DocumentsGalleryProps {
   scheduleImageFileName?: string;
 }
 
-const documents = [
-  { key: 'nationalIdImage' as const, label: 'National ID', type: 'image' },
-  { key: 'universityCardImage' as const, label: 'University Card', type: 'image' },
-  { key: 'certificate1Image' as const, label: 'Certificate', type: 'image' },
-  { key: 'scheduleImage' as const, label: 'Schedule', type: 'pdf' },
-];
-
 export default function DocumentsGallery({
-
   nationalIdImage,
   universityCardImage,
   certificate1Image,
@@ -31,18 +22,35 @@ export default function DocumentsGallery({
 }: DocumentsGalleryProps) {
   const [modalImage, setModalImage] = useState<string | null>(null);
 
-  const availableDocs = documents
-    .map(doc => ({
-      ...doc,
-      url: {
-        nationalIdImage,
-        universityCardImage,
-        certificate1Image,
-        scheduleImage,
-      }[doc.key],
-      fileName: doc.key === 'scheduleImage' ? scheduleImageFileName : undefined,
-    }))
-    .filter(doc => doc.url);
+  const documents = [
+    {
+      key: 'nationalIdImage' as const,
+      label: 'National ID',
+      type: 'image' as const,
+      url: nationalIdImage, 
+    },
+    {
+      key: 'universityCardImage' as const,
+      label: 'University Card',
+      type: 'image' as const,
+      url: universityCardImage,  
+    },
+    {
+      key: 'certificate1Image' as const,
+      label: 'Certificate',
+      type: 'image' as const,
+      url: certificate1Image, 
+    },
+    {
+      key: 'scheduleImage' as const,
+      label: 'Schedule',
+      type: 'pdf' as const,
+      url: scheduleImage,  
+      fileName: scheduleImageFileName,  
+    },
+  ];
+
+  const availableDocs = documents.filter(doc => doc.url);
 
   if (availableDocs.length === 0) return null;
 

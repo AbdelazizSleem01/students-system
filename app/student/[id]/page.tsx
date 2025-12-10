@@ -1,4 +1,3 @@
-
 'use client';
 import { useParams } from 'next/navigation';
 import { useEffect, useState } from 'react';
@@ -85,12 +84,7 @@ export default function StudentPublicPage() {
     );
   }
 
-  const sanitizedImages = {
-    nationalIdImage: sanitizeImageUrl(student.nationalIdImage),
-    universityCardImage: sanitizeImageUrl(student.universityCardImage),
-    scheduleImage: sanitizeImageUrl(student.scheduleImage),
-    certificate1Image: sanitizeImageUrl(student.certificate1Image),
-  };
+
 
   const formatDate = (date?: string) =>
     !date ? 'N/A' : new Date(date).toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' });
@@ -104,13 +98,13 @@ export default function StudentPublicPage() {
       : null,
     student.cvUrl
       ? {
-          icon: 'cv' as const,
-          analyticsUrl: undefined,
-          actualUrl: student.cvUrl,
-          label: 'CV/Resume',
-          isDownload: true,
-          downloadName: student.cvFileName,
-        }
+        icon: 'cv' as const,
+        analyticsUrl: undefined,
+        actualUrl: student.cvUrl,
+        label: 'CV/Resume',
+        isDownload: true,
+        downloadName: student.cvFileName,
+      }
       : null,
   ].filter(Boolean) as Array<{
     icon: 'github' | 'linkedin' | 'cv';
@@ -212,10 +206,13 @@ export default function StudentPublicPage() {
               <h3 className="text-2xl sm:text-3xl font-bold text-gray-800 mb-10 text-center px-4">
                 Official Documents
               </h3>
-              <DocumentsGallery 
-                {...sanitizedImages} 
-                scheduleImageFileName={student.scheduleImageFileName}
-              />
+             <DocumentsGallery 
+  nationalIdImage={student.nationalIdImage}
+  universityCardImage={student.universityCardImage}
+  certificate1Image={student.certificate1Image}
+  scheduleImage={student.scheduleImage}
+  scheduleImageFileName={student.scheduleImageFileName}
+/>
             </div>
 
             {/* Action Buttons */}
@@ -237,17 +234,17 @@ export default function StudentPublicPage() {
   );
 }
 
-function InfoRow({ 
-  icon: Icon, 
-  label, 
-  value, 
-  isEmail = false, 
-  color = "text-gray-700" 
-}: { 
-  icon: any; 
-  label: string; 
-  value: string; 
-  isEmail?: boolean; 
+function InfoRow({
+  icon: Icon,
+  label,
+  value,
+  isEmail = false,
+  color = "text-gray-700"
+}: {
+  icon: any;
+  label: string;
+  value: string;
+  isEmail?: boolean;
   color?: string;
 }) {
   return (
@@ -263,8 +260,8 @@ function InfoRow({
 
       <div className="sm:text-right">
         {isEmail ? (
-          <a 
-            href={`mailto:${value}`} 
+          <a
+            href={`mailto:${value}`}
             className={`font-bold ${color} hover:underline break-all text-sm sm:text-base block`}
           >
             {value}

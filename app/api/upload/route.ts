@@ -22,12 +22,20 @@ export async function POST(request: NextRequest) {
     const isPdf = file.type === "application/pdf";
     const resourceType = isPdf ? "raw" : "image";
 
+    const originalName = file.name;
+    const timestamp = Date.now();
+    const randomString = Math.random().toString(36).substring(2, 15);
+    const extension = originalName.substring(originalName.lastIndexOf('.'));
+    const baseName = originalName.substring(0, originalName.lastIndexOf('.'));
+    const uniqueFilename = `${baseName}_${timestamp}_${randomString}${extension}`;
+
     const result: any = await new Promise((resolve, reject) => {
       cloudinary.uploader
         .upload_stream(
           {
             resource_type: resourceType as any,
             folder: isPdf ? "student-documents" : "student-images",
+            public_id: uniqueFilename.replace(/\s+/g, "_").replace(/\.[^/.]+$/, ""),
             use_filename: true,
             unique_filename: false,
           },
