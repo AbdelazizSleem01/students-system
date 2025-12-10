@@ -1,7 +1,7 @@
 
-import { notFound } from 'next/navigation';
-import dbConnect from '@/lib/mongodb';
-import Student from '@/models/Student';
+'use client';
+import { useParams } from 'next/navigation';
+import { useEffect, useState } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
 import {
@@ -17,45 +17,75 @@ import {
   FaFilePdf,
   FaCopy,
   FaLink,
+  FaUserCircle,
 } from 'react-icons/fa';
-import { Metadata } from 'next';
 import DocumentsGallery from './DocumentsGallery';
 import CopyProfileButton from './CopyProfileButton';
 import VisitTracker from '@/components/VisitTracker';
 import SocialLinksClient from '@/components/SocialLinksClient';
-
-interface PageProps {
-  params: Promise<{ id: string }>;
-}
-
-export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
-  const { id } = await params;
-  await dbConnect();
-  const student = await Student.findOne({ publicLink: `/student/${id}` });
-
-  return {
-    title: student ? `${student.name} - Student Profile` : 'Student Profile',
-    description: student
-      ? `${student.name} - ${student.major} at ${student.university}`
-      : 'Student Profile',
-  };
-}
+import { Student } from '@/types';
 
 const sanitizeImageUrl = (url?: string | null): string | undefined => {
   if (!url?.trim()) return undefined;
   return url.startsWith('http') || url.startsWith('/') || url.startsWith('data:') ? url : undefined;
 };
 
-export default async function StudentPublicPage({ params }: PageProps) {
-  await dbConnect();
-  const { id } = await params;
-  const student = await Student.findOne({ publicLink: `/student/${id}` });
-  if (!student) notFound();
+export default function StudentPublicPage() {
+  const params = useParams();
+  const id = params.id as string;
+  const [student, setStudent] = useState<Student | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
-  const profileUrl = `${process.env.NEXT_PUBLIC_BASE_URL}/student/${id}`;
+  useEffect(() => {
+    const fetchStudentData = async () => {
+      try {
+        setLoading(true);
+        const response = await fetch(`/api/students/${id}`);
+        if (!response.ok) {
+          throw new Error('Student not found');
+        }
+        const studentData = await response.json();
+        setStudent(studentData);
+      } catch (err) {
+        setError(err instanceof Error ? err.message : 'Failed to load student data');
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    if (id) {
+      fetchStudentData();
+    }
+  }, [id]);
+
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-gray-50 py-8 px-4 sm:px-6 flex items-center justify-center">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-16 w-16 border-t-4 border-b-4 border-indigo-500 mb-4 mx-auto"></div>
+          <p className="text-xl text-gray-600">Loading student profile...</p>
+        </div>
+      </div>
+    );
+  }
+
+  if (error || !student) {
+    return (
+      <div className="min-h-screen bg-gray-50 py-8 px-4 sm:px-6 flex items-center justify-center">
+        <div className="text-center bg-white p-8 rounded-3xl shadow-xl border border-gray-200 max-w-md">
+          <FaUserCircle className="text-6xl text-gray-400 mb-4 mx-auto" />
+          <h2 className="text-2xl font-bold text-gray-700 mb-2">Student not found</h2>
+          <p className="text-gray-500 mb-4">The student profile you're looking for doesn't exist or has been removed.</p>
+          <Link href="/" className="btn btn-primary">
+            Go Home
+          </Link>
+        </div>
+      </div>
+    );
+  }
 
   const sanitizedImages = {
-    officialDocumentsImage: sanitizeImageUrl(student.officialDocumentsImage),
     nationalIdImage: sanitizeImageUrl(student.nationalIdImage),
     universityCardImage: sanitizeImageUrl(student.universityCardImage),
     scheduleImage: sanitizeImageUrl(student.scheduleImage),
