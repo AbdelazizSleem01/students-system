@@ -6,7 +6,7 @@ import { FaExpand, FaFilePdf, FaDownload } from 'react-icons/fa';
 import { FaX } from 'react-icons/fa6';
 
 interface DocumentsGalleryProps {
-  officialDocumentsImage?: string;
+  nationalIdImage?: string;
   universityCardImage?: string;
   certificate1Image?: string;
   scheduleImage?: string;
@@ -14,14 +14,14 @@ interface DocumentsGalleryProps {
 }
 
 const documents = [
-  { key: 'officialDocumentsImage' as const, label: 'National ID', type: 'image' },
+  { key: 'nationalIdImage' as const, label: 'National ID', type: 'image' },
   { key: 'universityCardImage' as const, label: 'University Card', type: 'image' },
   { key: 'certificate1Image' as const, label: 'Certificate', type: 'image' },
   { key: 'scheduleImage' as const, label: 'Schedule', type: 'pdf' },
 ];
 
 export default function DocumentsGallery({
-  officialDocumentsImage,
+  nationalIdImage,
   universityCardImage,
   certificate1Image,
   scheduleImage,
@@ -33,7 +33,7 @@ export default function DocumentsGallery({
     .map(doc => ({
       ...doc,
       url: {
-        officialDocumentsImage,
+        nationalIdImage,
         universityCardImage,
         certificate1Image,
         scheduleImage,
