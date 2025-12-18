@@ -21,6 +21,7 @@ const StudentSchema = new mongoose.Schema({
   validUntil: String,
   cvUrl: String,
   cvFileName: String,
+  phone: String,
   github: String,
   linkedin: String,
   whatsapp: String,
@@ -53,6 +54,15 @@ const StudentSchema = new mongoose.Schema({
     type: Number,
     default: 0,
   },
+  instagramClicks: {
+    type: Number,
+    default: 0,
+  },
+  tiktokClicks: {
+    type: Number,
+    default: 0,
+  },
+  instapay: String,
 }, {
   timestamps: true,
 });

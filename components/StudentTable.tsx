@@ -327,6 +327,34 @@ export default function StudentTable({ students, loading, onStudentsChange }: St
     setLinksModal({ isOpen: false, student: null });
   };
 
+  const copyLinksPageUrl = async (student: Student) => {
+    // Extract slug from publicLink (format: /student/{slug})
+    const slug = student.publicLink.split('/').pop();
+    const linksUrl = `${window.location.origin}/student/${slug}/links`;
+    try {
+      await navigator.clipboard.writeText(linksUrl);
+      await Swal.fire({
+        title: 'Copied!',
+        text: 'Links page URL copied to clipboard',
+        icon: 'success',
+        timer: 1500,
+        showConfirmButton: false,
+        toast: true,
+        position: 'top-end'
+      });
+    } catch (err) {
+      await Swal.fire({
+        title: 'Error!',
+        text: 'Failed to copy URL',
+        icon: 'error',
+        timer: 2000,
+        showConfirmButton: false,
+        toast: true,
+        position: 'top-end'
+      });
+    }
+  };
+
   if (loading) {
     return (
       <div className="flex flex-col items-center justify-center py-12 sm:py-16">
@@ -413,6 +441,14 @@ export default function StudentTable({ students, loading, onStudentsChange }: St
                   <td className="px-4 sm:px-6 py-4 sm:py-5">
                     <div className="flex items-center gap-2 sm:gap-3">
                       <button
+                        onClick={() => copyLinksPageUrl(student)}
+                        className="btn btn-sm bg-linear-to-r from-green-500 to-green-600 border-none text-white gap-2 rounded-xl hover:shadow-lg transition-all tooltip text-xs sm:text-sm"
+                        data-tip="Copy Links Page URL"
+                      >
+                        <FaCopy className="text-xs sm:text-sm" />
+                        Copy Links
+                      </button>
+                      <button
                         onClick={() => openLinksModal(student)}
                         className="btn btn-sm bg-linear-to-r from-gray-600 to-gray-700 border-none text-white gap-2 rounded-xl hover:shadow-lg transition-all tooltip text-xs sm:text-sm"
                         data-tip="View & Copy Links"
@@ -483,24 +519,31 @@ export default function StudentTable({ students, loading, onStudentsChange }: St
                 </Link>
               </div>
 
-              <div className="flex justify-between items-center pt-4 border-t border-gray-200 gap-2">
+              <div className="grid grid-cols-2 gap-2 pt-4 border-t border-gray-200">
+                <button
+                  onClick={() => copyLinksPageUrl(student)}
+                  className="btn btn-sm bg-linear-to-r from-green-500 to-green-600 border-none text-white gap-2 rounded-xl text-xs sm:text-sm"
+                >
+                  <FaCopy className="text-xs sm:text-sm" />
+                  Copy Links
+                </button>
                 <button
                   onClick={() => openLinksModal(student)}
-                  className="btn btn-sm bg-linear-to-r from-gray-600 to-gray-700 border-none text-white gap-2 flex-1 rounded-xl text-xs sm:text-sm"
+                  className="btn btn-sm bg-linear-to-r from-gray-600 to-gray-700 border-none text-white gap-2 rounded-xl text-xs sm:text-sm"
                 >
                   <FaLink className="text-xs sm:text-sm" />
                   Links
                 </button>
                 <button
                   onClick={() => handleEditName(student)}
-                  className="btn btn-sm bg-linear-to-r from-amber-500 to-amber-600 border-none text-white gap-2 flex-1 rounded-xl text-xs sm:text-sm"
+                  className="btn btn-sm bg-linear-to-r from-amber-500 to-amber-600 border-none text-white gap-2 rounded-xl text-xs sm:text-sm"
                 >
                   <FaEdit className="text-xs sm:text-sm" />
                   Rename
                 </button>
                 <button
                   onClick={() => handleDelete(student._id, student.name)}
-                  className="btn btn-sm bg-linear-to-r from-red-500 to-red-600 border-none text-white gap-2 flex-1 rounded-xl text-xs sm:text-sm"
+                  className="btn btn-sm bg-linear-to-r from-red-500 to-red-600 border-none text-white gap-2 rounded-xl text-xs sm:text-sm"
                 >
                   <FaTrash className="text-xs sm:text-sm" />
                   Delete
@@ -550,6 +593,13 @@ export default function StudentTable({ students, loading, onStudentsChange }: St
               </div>
 
               <div className="flex flex-col gap-2 pt-4 border-t border-gray-200">
+                <button
+                  onClick={() => copyLinksPageUrl(student)}
+                  className="btn btn-sm bg-linear-to-r from-green-500 to-green-600 border-none text-white gap-2 rounded-xl text-xs py-2 h-auto"
+                >
+                  <FaCopy className="text-xs" />
+                  Copy Links Page
+                </button>
                 <button
                   onClick={() => openLinksModal(student)}
                   className="btn btn-sm bg-linear-to-r from-gray-600 to-gray-700 border-none text-white gap-2 rounded-xl text-xs py-2 h-auto"

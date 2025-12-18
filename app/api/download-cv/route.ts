@@ -7,6 +7,7 @@ export async function GET(
   const { searchParams } = new URL(request.url);
   const url = searchParams.get('url');
   const filename = searchParams.get('name') || 'CV.pdf';
+  const inline = searchParams.get('inline') === 'true';
 
   if (!url) {
     return new NextResponse('Missing URL', { status: 400 });
@@ -21,7 +22,9 @@ export async function GET(
     return new NextResponse(arrayBuffer, {
       headers: {
         'Content-Type': 'application/pdf',
-        'Content-Disposition': `attachment; filename="${encodeURIComponent(filename)}"`,
+        'Content-Disposition': inline
+          ? `inline; filename="${encodeURIComponent(filename)}"`
+          : `attachment; filename="${encodeURIComponent(filename)}"`,
         'Cache-Control': 'no-cache',
       },
     });

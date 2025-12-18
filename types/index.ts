@@ -13,6 +13,7 @@ export interface Student {
   validUntil: string;
   cvUrl?: string;
   cvFileName?: string;
+  phone?: string;
   github?: string;
   linkedin?: string;
   whatsapp?: string;
@@ -38,6 +39,9 @@ export interface Student {
   lastViewed?: Date;
   linkedinClicks: number;
   githubClicks: number;
+  instagramClicks: number;
+  tiktokClicks: number;
+  instapay?: string;
 }
 
 export interface Admin {

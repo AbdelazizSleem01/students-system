@@ -16,6 +16,9 @@ import {
   FaFilePdf,
   FaSpotify,
   FaUser,
+  FaMoneyBillWave,
+  FaEye,
+  FaPhone,
 } from 'react-icons/fa6';
 
 interface PageProps {
@@ -25,7 +28,7 @@ interface PageProps {
 export const metadata = {
   title: 'My Links',
   description: 'All my social media and contact links in one place.',
-  };
+};
 
 const iconMap: Record<string, any> = {
   whatsapp: FaWhatsapp,
@@ -76,7 +79,24 @@ export default async function LinksPage({ params }: PageProps) {
   ].filter(link => link.url);
 
   return (
-    <div className="min-h-screen bg-linear-to-b from-amber-700 via-amber-800 to-amber-900 flex items-center justify-center px-4 py-8">
+    <div className="min-h-screen bg-linear-to-b from-amber-700 via-amber-800 to-amber-900 flex items-center justify-center px-4 py-8 relative">
+      {/* Instapay Button - Top Left */}
+      {student.instapay && (
+        <div className="absolute top-4 left-4 z-10">
+          <Link
+            href={student.instapay}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="block"
+          >
+            <div className=" flex items-center gap-2 bg-linear-to-r from-amber-500 to-amber-600 text-white rounded-full shadow-xl p-3 hover:scale-105 transition-all duration-300 hover:shadow-2xl">
+              <FaMoneyBillWave className="text-2xl" />
+              Pay Me
+            </div>
+          </Link>
+        </div>
+      )}
+
       {/* Main Container */}
       <div className="w-full max-w-lg shadow-2xl rounded-3xl p-8">
 
@@ -116,6 +136,11 @@ export default async function LinksPage({ params }: PageProps) {
           )}
 
           <div className="flex justify-center gap-5 mb-10 text-white text-2xl">
+            {student.phone && (
+              <a href={`tel:${student.phone}`} className="hover:opacity-80 transition-opacity">
+                <FaPhone />
+              </a>
+            )}
             {student.whatsapp && (
               <Link href={student.whatsapp} target="_blank" rel="noopener noreferrer">
                 <FaWhatsapp className="hover:opacity-80 transition-opacity" />
@@ -156,12 +181,15 @@ export default async function LinksPage({ params }: PageProps) {
             const color = platformColors[key] || '#ffffff';
             const isGradient = key === 'instagram';
 
-            // Determine the link URL - use analytics endpoints for GitHub and LinkedIn
             let linkUrl = url!;
             if (key === 'github') {
               linkUrl = `/api/analytics/github/${id}`;
             } else if (key === 'linkedin') {
               linkUrl = `/api/analytics/linkedin/${id}`;
+            } else if (key === 'instagram') {
+              linkUrl = `/api/analytics/instagram/${id}`;
+            } else if (key === 'tiktok') {
+              linkUrl = `/api/analytics/tiktok/${id}`;
             }
 
             if (key === 'cvUrl') {
@@ -175,9 +203,8 @@ export default async function LinksPage({ params }: PageProps) {
                   <div className="bg-amber-100 rounded-full shadow-xl p-4 flex items-center gap-5 hover:scale-105 transition-all duration-300 hover:shadow-2xl">
                     {/* Icon */}
                     <div
-                      className={`w-10 h-10 rounded-2xl flex items-center justify-center text-white text-2xl shadow-lg ${
-                        isGradient ? color : ''
-                      }`}
+                      className={`w-10 h-10 rounded-2xl flex items-center justify-center text-white text-2xl shadow-lg ${isGradient ? color : ''
+                        }`}
                       style={!isGradient ? { backgroundColor: color } : undefined}
                     >
                       <Icon />
@@ -205,9 +232,8 @@ export default async function LinksPage({ params }: PageProps) {
                   <div className="bg-amber-100 rounded-full shadow-xl p-4 flex items-center gap-5 hover:scale-105 transition-all duration-300 hover:shadow-2xl">
                     {/* Icon */}
                     <div
-                      className={`w-10 h-10 rounded-2xl flex items-center justify-center text-white text-2xl shadow-lg ${
-                        isGradient ? color : ''
-                      }`}
+                      className={`w-10 h-10 rounded-2xl flex items-center justify-center text-white text-2xl shadow-lg ${isGradient ? color : ''
+                        }`}
                       style={!isGradient ? { backgroundColor: color } : undefined}
                     >
                       <Icon />
@@ -225,6 +251,52 @@ export default async function LinksPage({ params }: PageProps) {
               );
             }
           })}
+
+          {/* Pay Me Button */}
+          {student.instapay && (
+            <Link
+              href={student.instapay}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="block"
+            >
+              <div className="bg-amber-100  rounded-full shadow-xl p-4 flex items-center gap-5 hover:scale-105 transition-all duration-300 hover:shadow-2xl">
+                {/* Icon */}
+                <div className="w-10 h-10 rounded-2xl bg-indigo-700 flex items-center justify-center text-white text-2xl shadow-lg">
+                  <FaMoneyBillWave />
+                </div>
+
+                {/* Text */}
+                <div className="flex-1">
+                  <h3 className="text-xl font-bold">
+                    Pay Me
+                  </h3>
+                  <p className="text-gray-500 text-sm">Send payment</p>
+                </div>
+              </div>
+            </Link>
+          )}
+
+          {/* View Profile Button */}
+          <Link
+            href={`/student/${id}`}
+            className="block"
+          >
+            <div className="bg-linear-to-r from-blue-500 to-blue-600 text-white rounded-full shadow-xl p-4 flex items-center gap-5 hover:scale-105 transition-all duration-300 hover:shadow-2xl">
+              {/* Icon */}
+              <div className="w-10 h-10 rounded-2xl bg-white/20 flex items-center justify-center text-white text-2xl shadow-lg">
+                <FaEye />
+              </div>
+
+              {/* Text */}
+              <div className="flex-1">
+                <h3 className="text-xl font-bold">
+                  View Profile
+                </h3>
+                <p className="text-blue-100 text-sm">See full profile</p>
+              </div>
+            </div>
+          </Link>
         </div>
 
         {/* Footer */}

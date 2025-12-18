@@ -11,7 +11,7 @@ import {
   FaFilePdf, FaWhatsapp, FaInstagram, FaTiktok, FaSpotify, FaFacebook,
   FaTwitter, FaSnapchat, FaFile, FaCalendar, FaEnvelope, FaArrowLeft,
   FaMobile, FaDesktop, FaChartBar,
-  FaDownload
+  FaDownload, FaMoneyBillWave, FaPhone
 } from 'react-icons/fa';
 
 export default function EditStudentPage() {
@@ -407,12 +407,20 @@ export default function EditStudentPage() {
                   <div className="space-y-6">
                     <SectionHeader icon={<FaShareAlt className="text-white text-xl" />} title="Social Links" color="from-purple-500 to-purple-600" />
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                      <div className="form-control">
+                        <label className="label block mb-3"><span className="label-text font-semibold text-gray-700 flex items-center gap-2"><FaPhone className="text-blue-500" />Phone Number</span></label>
+                        <input type="tel" className="input input-bordered w-full focus:ring-2 focus:ring-purple-500 rounded-xl py-3" value={student.phone || ''} onChange={(e) => handleInputChange('phone', e.target.value)} placeholder="Enter phone number" />
+                      </div>
                       {['github', 'linkedin', 'whatsapp', 'instagram', 'tiktok', 'spotify', 'facebook', 'x', 'threads', 'snapchat'].map((platform) => (
                         <div key={platform} className="form-control">
                           <label className="label block mb-3"><span className="label-text font-semibold text-gray-700 flex items-center gap-2">{socialIcons[platform] || <FaShareAlt />}{platform.charAt(0).toUpperCase() + platform.slice(1)}</span></label>
                           <input type="url" className="input input-bordered w-full focus:ring-2 focus:ring-purple-500 rounded-xl py-3" value={(student as any)[platform] || ''} onChange={(e) => handleInputChange(platform as keyof Student, e.target.value)} placeholder={`Enter ${platform} URL`} />
                         </div>
                       ))}
+                      <div className="form-control">
+                        <label className="label block mb-3"><span className="label-text font-semibold text-gray-700 flex items-center gap-2"><FaMoneyBillWave className="text-green-500" />Instapay</span></label>
+                        <input type="url" className="input input-bordered w-full focus:ring-2 focus:ring-purple-500 rounded-xl py-3" value={student.instapay || ''} onChange={(e) => handleInputChange('instapay', e.target.value)} placeholder="Enter Instapay URL" />
+                      </div>
                     </div>
                   </div>
                 )}
@@ -575,6 +583,18 @@ export default function EditStudentPage() {
                         <div className="stat-title">GitHub Clicks</div>
                         <div className="stat-value text-3xl">{student.githubClicks || 0}</div>
                         <div className="stat-desc">GitHub profile clicks</div>
+                      </div>
+                      <div className="stat bg-gray-50 rounded-2xl border border-gray-200 p-6">
+                        <div className="stat-figure text-pink-500"><FaInstagram className="inline-block w-8 h-8" /></div>
+                        <div className="stat-title">Instagram Clicks</div>
+                        <div className="stat-value text-3xl">{student.instagramClicks || 0}</div>
+                        <div className="stat-desc">Instagram profile clicks</div>
+                      </div>
+                      <div className="stat bg-gray-50 rounded-2xl border border-gray-200 p-6">
+                        <div className="stat-figure text-black"><FaTiktok className="inline-block w-8 h-8" /></div>
+                        <div className="stat-title">TikTok Clicks</div>
+                        <div className="stat-value text-3xl">{student.tiktokClicks || 0}</div>
+                        <div className="stat-desc">TikTok profile clicks</div>
                       </div>
                     </div>
                   </div>

@@ -2,7 +2,7 @@
 
 import Image from 'next/image';
 import { useState } from 'react';
-import { FaExpand, FaFilePdf, FaDownload } from 'react-icons/fa';
+import { FaExpand, FaFilePdf, FaEye } from 'react-icons/fa';
 import { FaX } from 'react-icons/fa6';
 
 interface DocumentsGalleryProps {
@@ -21,55 +21,65 @@ export default function DocumentsGallery({
   scheduleImageFileName,
 }: DocumentsGalleryProps) {
   const [modalImage, setModalImage] = useState<string | null>(null);
+  const [modalPdf, setModalPdf] = useState<string | null>(null);
 
   const documents = [
     {
       key: 'nationalIdImage' as const,
       label: 'National ID',
       type: 'image' as const,
-      url: nationalIdImage, 
+      url: nationalIdImage,
     },
     {
       key: 'universityCardImage' as const,
       label: 'University Card',
       type: 'image' as const,
-      url: universityCardImage,  
+      url: universityCardImage,
     },
     {
       key: 'certificate1Image' as const,
       label: 'Certificate',
       type: 'image' as const,
-      url: certificate1Image, 
+      url: certificate1Image,
     },
     {
       key: 'scheduleImage' as const,
       label: 'Schedule',
       type: 'pdf' as const,
-      url: scheduleImage,  
-      fileName: scheduleImageFileName,  
+      url: scheduleImage,
+      fileName: scheduleImageFileName,
     },
   ];
-
-  const availableDocs = documents.filter(doc => doc.url);
-
-  if (availableDocs.length === 0) return null;
 
   const openModal = (url: string) => {
     setModalImage(url);
   };
 
+  const openPdfModal = (url: string) => {
+    setModalPdf(url);
+  };
+
   return (
     <>
       <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-6">
-        {availableDocs.map(({ url, label, type, fileName }) => (
+        {documents.map(({ url, label, type, fileName }) => (
           <div
             key={label}
-            className="group relative cursor-pointer transition-all duration-300 hover:scale-105 hover:shadow-2xl"
+            className={`group relative transition-all duration-300 ${url ? 'cursor-pointer hover:scale-105 hover:shadow-2xl' : ''}`}
             onClick={() => type === 'image' && url && openModal(url)}
           >
             <div className="bg-white rounded-2xl shadow-lg overflow-hidden border border-gray-200">
               <div className="aspect-3/4 relative bg-linear-to-br from-gray-50 to-gray-100 overflow-hidden">
-                {type === 'pdf' ? (
+                {!url ? (
+                  <div className="w-full h-full flex flex-col items-center justify-center gap-4 text-center p-4">
+                    <div className="w-20 h-20 rounded-2xl bg-linear-to-br from-gray-200 to-gray-300 flex items-center justify-center shadow-inner">
+                      <FaFilePdf className="text-3xl text-gray-400" />
+                    </div>
+                    <p className="text-xs font-medium text-gray-400 px-2 truncate w-full">
+                      Not uploaded
+                    </p>
+                  </div>
+                ) : type === 'pdf' ? (
                   <div className="w-full h-full flex flex-col items-center justify-center gap-4 text-center p-4">
                     <div className="w-20 h-20 rounded-2xl bg-linear-to-br from-red-100 to-red-200 flex items-center justify-center shadow-xl border-4 border-white">
                       <FaFilePdf className="text-5xl text-red-600" />
@@ -77,19 +87,21 @@ export default function DocumentsGallery({
                     <p className="text-xs font-medium text-gray-700 px-2 truncate w-full">
                       {fileName || 'Schedule.pdf'}
                     </p>
-                    <a
-                      href={`/api/download-cv?url=${encodeURIComponent(url!)}&name=${encodeURIComponent(fileName || 'Schedule.pdf')}`}
-                      className="mt-2  px-4 py-2 bg-red-500 hover:bg-red-600 text-white text-xs font-semibold rounded-lg flex items-center gap-2 shadow-md transition-all"
-                      onClick={(e) => e.stopPropagation()}
+                    <button
+                      className="mt-2 px-4 py-2 bg-indigo-500 btn hover:bg-indigo-600 text-white text-xs font-semibold rounded-lg flex items-center gap-2 shadow-md transition-all"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        openPdfModal(url);
+                      }}
                     >
-                      Download
-                      <FaDownload />
-                    </a>
+                      View
+                      <FaEye />
+                    </button>
                   </div>
                 ) : (
                   <>
                     <Image
-                      src={url!}
+                      src={url}
                       alt={label}
                       width={300}
                       height={400}
@@ -97,7 +109,7 @@ export default function DocumentsGallery({
                       sizes="(max-width: 768px) 100vw, (max-width: 1024px) 50vw, 25vw"
                       unoptimized
                     />
-                    <div className="absolute inset-0  bg-opacity-0 group-hover:bg-opacity-30 transition-all duration-300 flex items-center justify-center rounded-t-2xl pointer-events-none">
+                    <div className="absolute inset-0 bg-opacity-0 group-hover:bg-opacity-30 transition-all duration-300 flex items-center justify-center rounded-t-2xl pointer-events-none">
                       <FaExpand className="text-white text-4xl opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
                     </div>
                   </>
@@ -105,7 +117,7 @@ export default function DocumentsGallery({
               </div>
 
               <div className="p-4 text-center bg-white border-t border-gray-100">
-                <p className="text-sm font-semibold text-gray-800">{label}</p>
+                <p className={`text-sm font-semibold ${url ? 'text-gray-800' : 'text-gray-400'}`}>{label}</p>
               </div>
             </div>
           </div>
@@ -135,6 +147,32 @@ export default function DocumentsGallery({
                 height={1800}
                 className="max-w-full max-h-[85vh] object-contain rounded-2xl"
                 unoptimized
+              />
+            </div>
+          </div>
+        </div>
+      )}
+
+      {modalPdf && (
+        <div
+          className="fixed inset-0 z-50 flex items-center justify-center p-6 bg-white/95 backdrop-blur-md"
+          onClick={() => setModalPdf(null)}
+        >
+          <div className="relative max-w-5xl w-full h-full max-h-[90vh]">
+            <button
+              onClick={(e) => {
+                e.stopPropagation();
+                setModalPdf(null);
+              }}
+              className="btn btn-circle btn-md absolute -top-5 -right-4 font-light z-10 bg-gray-300"
+            >
+              <FaX />
+            </button>
+            <div className="bg-white rounded-3xl shadow-2xl overflow-hidden border border-gray-200 w-full h-full">
+              <iframe
+                src={`/api/download-cv?url=${encodeURIComponent(modalPdf!)}&name=Schedule.pdf&inline=true`}
+                className="w-full h-full rounded-3xl"
+                title="PDF Preview"
               />
             </div>
           </div>
