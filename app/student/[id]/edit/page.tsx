@@ -458,12 +458,133 @@ export default function EditStudentPage() {
                       color="from-teal-500 to-teal-600"
                     />
 
-                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-6">
+                    {/* National ID and University Card */}
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                       {[
-                        { field: 'officialDocumentsImage', label: 'Official Documents', icon: <FaFilePdf className="text-4xl text-gray-500" /> },
                         { field: 'nationalIdImage', label: 'National ID', icon: <FaIdCard className="text-4xl text-blue-600" /> },
                         { field: 'universityCardImage', label: 'University Card', icon: <FaUniversity className="text-4xl text-indigo-600" /> },
-                        { field: 'certificate1Image', label: 'Certificate', icon: <FaCheckCircle className="text-4xl text-green-600" /> },
+                      ].map((doc) => {
+                        const hasFile = !!student?.[doc.field as keyof Student];
+
+                        return (
+                          <div key={doc.field} className="form-control">
+                            <label className="label pb-2">
+                              <span className="label-text font-bold text-gray-800 text-lg">
+                                {doc.label}
+                              </span>
+                            </label>
+
+                            <div className="bg-gray-50 rounded-2xl border-2 border-dashed border-gray-300 p-6 hover:border-gray-400 transition-all duration-200">
+                              <div className="flex flex-col items-center gap-5">
+                                {hasFile ? (
+                                  <div
+                                    className="avatar cursor-pointer hover:scale-110 transition-transform duration-300"
+                                    onClick={() => setSelectedImage(student![doc.field as keyof Student] as string)}
+                                  >
+                                    <div className="w-28 h-28 rounded-2xl ring-4 ring-white shadow-2xl overflow-hidden border-4 border-gray-200">
+                                      <Image
+                                        src={student![doc.field as keyof Student] as string}
+                                        alt={doc.label}
+                                        width={112}
+                                        height={112}
+                                        className="object-cover w-full h-full"
+                                      />
+                                    </div>
+                                  </div>
+                                ) : (
+                                  <div className="w-24 h-24 bg-linear-to-br from-gray-200 to-gray-300 rounded-2xl flex items-center justify-center shadow-inner">
+                                    {doc.icon}
+                                  </div>
+                                )}
+
+                                <label className={`btn btn-primary w-full ${imageUploading ? 'btn-disabled' : ''}`}>
+                                  <FaUpload className="mr-2" />
+                                  {imageUploading ? 'Uploading...' : 'Upload File'}
+                                  <input
+                                    type="file"
+                                    className="hidden"
+                                    accept="image/*"
+                                    onChange={(e) => e.target.files?.[0] && handleImageUpload(e.target.files[0], doc.field as keyof Student)}
+                                    disabled={imageUploading}
+                                  />
+                                </label>
+
+                                {hasFile && (
+                                  <span className="text-xs font-medium text-green-600 bg-green-50 px-3 py-1 rounded-full">
+                                    Uploaded
+                                  </span>
+                                )}
+                              </div>
+                            </div>
+                          </div>
+                        );
+                      })}
+                    </div>
+
+                    {/* Certificate with full width */}
+                    <div className="w-full">
+                      {(() => {
+                        const doc = { field: 'certificate1Image', label: 'Certificate', icon: <FaCheckCircle className="text-4xl text-green-600" /> };
+                        const hasFile = !!student?.[doc.field as keyof Student];
+
+                        return (
+                          <div className="form-control">
+                            <label className="label pb-2">
+                              <span className="label-text font-bold text-gray-800 text-lg">
+                                {doc.label}
+                              </span>
+                            </label>
+
+                            <div className="bg-gray-50 rounded-2xl border-2 border-dashed border-gray-300 p-6 hover:border-gray-400 transition-all duration-200">
+                              <div className="flex flex-col items-center gap-5">
+                                {hasFile ? (
+                                  <div
+                                    className="avatar cursor-pointer hover:scale-110 transition-transform duration-300"
+                                    onClick={() => setSelectedImage(student![doc.field as keyof Student] as string)}
+                                  >
+                                    <div className="w-28 h-28 rounded-2xl ring-4 ring-white shadow-2xl overflow-hidden border-4 border-gray-200">
+                                      <Image
+                                        src={student![doc.field as keyof Student] as string}
+                                        alt={doc.label}
+                                        width={112}
+                                        height={112}
+                                        className="object-cover w-full h-full"
+                                      />
+                                    </div>
+                                  </div>
+                                ) : (
+                                  <div className="w-24 h-24 bg-linear-to-br from-gray-200 to-gray-300 rounded-2xl flex items-center justify-center shadow-inner">
+                                    {doc.icon}
+                                  </div>
+                                )}
+
+                                <label className={`btn btn-primary w-full ${imageUploading ? 'btn-disabled' : ''}`}>
+                                  <FaUpload className="mr-2" />
+                                  {imageUploading ? 'Uploading...' : 'Upload File'}
+                                  <input
+                                    type="file"
+                                    className="hidden"
+                                    accept="image/*"
+                                    onChange={(e) => e.target.files?.[0] && handleImageUpload(e.target.files[0], doc.field as keyof Student)}
+                                    disabled={imageUploading}
+                                  />
+                                </label>
+
+                                {hasFile && (
+                                  <span className="text-xs font-medium text-green-600 bg-green-50 px-3 py-1 rounded-full">
+                                    Uploaded
+                                  </span>
+                                )}
+                              </div>
+                            </div>
+                          </div>
+                        );
+                      })()}
+                    </div>
+
+                    {/* PDFs in a row */}
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                      {[
                         { field: 'scheduleImage', label: 'Schedule', icon: <FaCalendarAlt className="text-4xl text-purple-600" />, isPdf: true },
                         { field: 'cvUrl', label: 'CV / Resume', icon: <FaFilePdf className="text-5xl text-red-600" />, isPdf: true },
                       ].map((doc) => {
@@ -569,7 +690,20 @@ export default function EditStudentPage() {
                       <div className="stat bg-gray-50 rounded-2xl border border-gray-200 p-6">
                         <div className="stat-figure text-green-500"><FaCalendarAlt className="inline-block w-8 h-8 stroke-current" /></div>
                         <div className="stat-title">Last Viewed</div>
-                        <div className="stat-value text-xl">{student.lastViewed ? new Date(student.lastViewed).toLocaleString() : 'Never'}</div>
+                        <div className="stat-value text-xl">
+                          {student.lastViewed ? (
+                            <div>
+                              <div>{(() => {
+                                const date = new Date(student.lastViewed);
+                                const day = String(date.getDate()).padStart(2, '0');
+                                const month = String(date.getMonth() + 1).padStart(2, '0');
+                                const year = date.getFullYear();
+                                return `${month}/${day}/${year}`;
+                              })()}</div>
+                              <div className="text-sm text-gray-500 mt-1">{new Date(student.lastViewed).toLocaleTimeString()}</div>
+                            </div>
+                          ) : 'Never'}
+                        </div>
                         <div className="stat-desc">Last time profile was viewed</div>
                       </div>
                       <div className="stat bg-gray-50 rounded-2xl border border-gray-200 p-6">
