@@ -9,7 +9,7 @@ import {
   FaLock, FaSave, FaKey, FaUpload, FaUserCircle, FaUniversity, FaIdCard,
   FaBook, FaCalendarAlt, FaCheckCircle, FaTimesCircle, FaGithub, FaLinkedin,
   FaFilePdf, FaWhatsapp, FaInstagram, FaTiktok, FaSpotify, FaFacebook,
-  FaTwitter, FaSnapchat, FaFile, FaCalendar, FaEnvelope, FaArrowLeft,
+  FaTwitter, FaSnapchat, FaYoutube, FaFile, FaCalendar, FaEnvelope, FaArrowLeft,
   FaMobile, FaDesktop, FaChartBar,
   FaDownload, FaMoneyBillWave, FaPhone
 } from 'react-icons/fa';
@@ -268,7 +268,8 @@ export default function EditStudentPage() {
     facebook: <FaFacebook className="text-blue-600" />,
     x: <FaTwitter className="text-black" />,
     threads: <FaInstagram className="text-black" />,
-    snapchat: <FaSnapchat className="text-yellow-400" />
+    snapchat: <FaSnapchat className="text-yellow-400" />,
+    youtube: <FaYoutube className="text-red-500" />
   };
 
   const SectionHeader = ({ icon, title, color }: { icon: JSX.Element; title: string; color: string }) => (
@@ -411,7 +412,7 @@ export default function EditStudentPage() {
                         <label className="label block mb-3"><span className="label-text font-semibold text-gray-700 flex items-center gap-2"><FaPhone className="text-blue-500" />Phone Number</span></label>
                         <input type="tel" className="input input-bordered w-full focus:ring-2 focus:ring-purple-500 rounded-xl py-3" value={student.phone || ''} onChange={(e) => handleInputChange('phone', e.target.value)} placeholder="Enter phone number" />
                       </div>
-                      {['github', 'linkedin', 'whatsapp', 'instagram', 'tiktok', 'spotify', 'facebook', 'x', 'threads', 'snapchat'].map((platform) => (
+                      {['github', 'linkedin', 'whatsapp', 'instagram', 'tiktok', 'spotify', 'facebook', 'x', 'threads', 'snapchat', 'youtube'].map((platform) => (
                         <div key={platform} className="form-control">
                           <label className="label block mb-3"><span className="label-text font-semibold text-gray-700 flex items-center gap-2">{socialIcons[platform] || <FaShareAlt />}{platform.charAt(0).toUpperCase() + platform.slice(1)}</span></label>
                           <input type="url" className="input input-bordered w-full focus:ring-2 focus:ring-purple-500 rounded-xl py-3" value={(student as any)[platform] || ''} onChange={(e) => handleInputChange(platform as keyof Student, e.target.value)} placeholder={`Enter ${platform} URL`} />

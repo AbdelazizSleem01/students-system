@@ -32,6 +32,7 @@ const StudentSchema = new mongoose.Schema({
   x: String,
   threads: String,
   snapchat: String,
+  youtube: String,
   publicLink: String,
   privateLink: String,
   editPassword: String,
@@ -59,6 +60,10 @@ const StudentSchema = new mongoose.Schema({
     default: 0,
   },
   tiktokClicks: {
+    type: Number,
+    default: 0,
+  },
+  youtubeClicks: {
     type: Number,
     default: 0,
   },

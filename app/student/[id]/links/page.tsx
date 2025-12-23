@@ -15,6 +15,7 @@ import {
   FaLinkedin,
   FaFilePdf,
   FaSpotify,
+  FaYoutube,
   FaUser,
   FaMoneyBillWave,
   FaEye,
@@ -42,6 +43,7 @@ const iconMap: Record<string, any> = {
   linkedin: FaLinkedin,
   cvUrl: FaFilePdf,
   spotify: FaSpotify,
+  youtube: FaYoutube,
 };
 
 const platformColors: Record<string, string> = {
@@ -56,6 +58,7 @@ const platformColors: Record<string, string> = {
   linkedin: '#0A66C2',
   cvUrl: '#EF4444',
   spotify: '#1DB954',
+  youtube: '#FF0000',
 };
 
 export default async function LinksPage({ params }: PageProps) {
@@ -71,6 +74,7 @@ export default async function LinksPage({ params }: PageProps) {
     { key: 'tiktok', url: student.tiktok },
     { key: 'facebook', url: student.facebook },
     { key: 'x', url: student.x || student.twitter },
+    { key: 'youtube', url: student.youtube },
     { key: 'snapchat', url: student.snapchat },
     { key: 'github', url: student.github },
     { key: 'linkedin', url: student.linkedin },
@@ -190,6 +194,8 @@ export default async function LinksPage({ params }: PageProps) {
               linkUrl = `/api/analytics/instagram/${id}`;
             } else if (key === 'tiktok') {
               linkUrl = `/api/analytics/tiktok/${id}`;
+            } else if (key === 'youtube') {
+              linkUrl = `/api/analytics/youtube/${id}`;
             }
 
             if (key === 'cvUrl') {
